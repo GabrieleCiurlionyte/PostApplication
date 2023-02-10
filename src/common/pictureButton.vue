@@ -1,12 +1,10 @@
 <template>
-    <div class="field">
-  <p class="control has-icons-left">
-    <slot name="input-slot"></slot>
-    <span class="icon is-small is-left">
+    <button class="button is-success">
+    <span class="icon is-small">
         <slot name="icon-slot"></slot>
     </span>
-  </p>
-    </div>
+        <slot name="text-slot"></slot>
+  </button>
 </template>
 
 <script>
@@ -33,19 +31,11 @@ export default {
 </script>
 
 <style scoped>
-    .input {
-        width: 40%;
-    }
-
-    .field{
+    .button {
         display: inline;
-        margin: 0    
-    }
-    .control {
-        display: inline;
-        margin-left: 0.7rem;
-        width: 90%;
+        margin-left: 1rem;
+        width: 20%;
         height: 70%;
+        margin: auto;
     }
-
 </style>

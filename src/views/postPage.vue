@@ -12,6 +12,16 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </template>
         </search-bar>
+
+        <picture-button>
+          <template #icon-slot>
+            <i class="fa-solid fa-plus"></i>
+          </template>
+          <template #text-slot>
+            <span>Add new article</span>
+          </template>
+        </picture-button>
+
         <pagination-page :posts="posts" ></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
                             @GoToPreviousPage="GoToPreviousPage()"
@@ -27,6 +37,7 @@
 import paginationPage from "../modules/PostPage/paginationPage.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
+import pictureButton from "../common/pictureButton.vue";
 
 
 export default {
@@ -35,6 +46,7 @@ export default {
     'pagination-page': paginationPage,
     'pagination-element' : paginationElement,
     'search-bar': searchBar,
+    'picture-button': pictureButton,
   },
 
   props: [
@@ -43,7 +55,7 @@ export default {
   data () {
     return {
       posts: [],
-      POSTS_PER_PAGE : 5,
+      POSTS_PER_PAGE : 4,
       current_page : 1,
       //TODO fix hardcoding
       last_page : 5,
@@ -67,6 +79,7 @@ export default {
   methods: {
 
     //TODO: whenever we clear the input field we go back to normal display mode or refresh page
+
     
     async getData(pageNumber) {
       try {
@@ -100,6 +113,7 @@ export default {
         console.log(error);
       }
     },
+
 
     ExecuteAPICall() {
       if(!(this.searchMode))
@@ -140,5 +154,9 @@ export default {
 </script>
 
 <style scoped>
+  #search-bar {
+    margin-left : 1rem auto 1rem;
+    padding : 5rem;
+  }
   
 </style>
