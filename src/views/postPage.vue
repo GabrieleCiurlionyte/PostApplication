@@ -1,5 +1,13 @@
 <template>
     <div id="Page">
+        <search-bar id="search-bar">
+          <template #input-slot>
+            <input class="input" type="search" placeholder="Search..."/>
+          </template>
+          <template #icon-slot>
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </template>
+        </search-bar>
         <pagination-page></pagination-page>
         <pagination-element></pagination-element>
     </div>
@@ -9,12 +17,14 @@
 
 import paginationPage from "../modules/PostPage/paginationPage.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
+import searchBar from "../common/searchBar.vue";
 
 export default {
 
   components: {
     'pagination-page': paginationPage,
     'pagination-element' : paginationElement,
+    'search-bar': searchBar,
   },
 
   props: [
@@ -40,4 +50,5 @@ export default {
 </script>
 
 <style scoped>
+  
 </style>
