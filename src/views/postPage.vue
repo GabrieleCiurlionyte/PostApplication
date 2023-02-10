@@ -22,7 +22,7 @@
           </template>
         </picture-button>
 
-        <pagination-page :posts="posts" ></pagination-page>
+        <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
                             @GoToPreviousPage="GoToPreviousPage()"
                             @GoToLastPage="GoToLastPage()"
@@ -55,6 +55,7 @@ export default {
   data () {
     return {
       posts: [],
+      authors: [],
       POSTS_PER_PAGE : 4,
       current_page : 1,
       //TODO fix hardcoding
@@ -65,22 +66,54 @@ export default {
   },
 
   mounted () {
+    
   },
 
   created () {
     this.searchMode = false;
     this.getData(0);
+    this.getAuthors();
   },
 
   computed: {
-    
+    //Construct a method to extract all the author id's from posts object
+    returnSetOfIDS: function(){
+      let authorIDS = [];
+      for(let post of this.posts){
+        authorIDS.push(post.author);
+      }
+      console.log("AUTHOR IDS");
+      console.log(authorIDS);
+      return authorIDS;
+    },
+
+    constructAuthorRequestString: function(){
+      const baseURL = "http://localhost:3000/Authors?"
+      for(i = 0; i < this.POSTS_PER_PAGE; i++) {
+        baseURL.concat(`id=${this.authorIDS[i]}&`);
+      }
+      return baseURL.slice(0,-1);
+    }
+
+
   },
   
   methods: {
 
     //TODO: whenever we clear the input field we go back to normal display mode or refresh page
 
-    
+    async getAuthors() {
+      try {
+        const response = await this.$http.get(
+          this.constructAuthorRequestString
+        );
+        this.authors = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+
     async getData(pageNumber) {
       try {
         const response = await this.$http.get(

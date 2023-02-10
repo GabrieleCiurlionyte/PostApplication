@@ -6,7 +6,7 @@
                 <p class="title is-4">{{ post.title}}</p>
             </template>
             <template #author-slot>
-                <p class="subtitle is-4">{{ post.id }}</p>
+                <p class="subtitle is-4">{{ post.author }}</p>
             </template>
             <template #time-slot>
                 <p class="subtitle is-6">{{ post.created_at }}</p>
@@ -34,7 +34,6 @@ import article_box from './articleBox'
     },
 
     computed(){
-        //TODO return author name according to id
     }
 
   }
