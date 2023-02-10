@@ -33,4 +33,9 @@ json-server db.js
 npm install bulma
 ```
 
+## To set up Axios for API
+``` bash
+npm i axios
+```
+
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).

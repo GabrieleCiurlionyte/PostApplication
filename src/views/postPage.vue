@@ -32,18 +32,34 @@ export default {
   
   data () {
     return {
-    }
+      posts: [],
+    };
   },
 
   mounted () {
   },
 
   created () {
+    this.getData();
   },
 
   computed: {
+    
   },
+  
   methods: {
+    async getData() {
+      try {
+        const response = await this.$http.get(
+          "http://localhost:3000/Authors/"
+        );
+        // JSON responses are automatically parsed.
+        this.posts = response.data;
+        console.log(this.posts);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 
 }
