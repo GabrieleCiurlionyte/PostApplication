@@ -8,8 +8,13 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </template>
         </search-bar>
-        <pagination-page></pagination-page>
-        <pagination-element></pagination-element>
+        <pagination-page :posts="posts" ></pagination-page>
+        <pagination-element @GoToNextPage="GoToNextPage()"
+                            @GoToPreviousPage="GoToPreviousPage()"
+                            @GoToLastPage="GoToLastPage()"
+                            @GoToFirstPage="GoToFirstPage()"
+                            :current_page="current_page"
+                            :last_page="last_page"></pagination-element>
     </div>
 </template>
 
@@ -18,6 +23,7 @@
 import paginationPage from "../modules/PostPage/paginationPage.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
+
 
 export default {
 
@@ -33,6 +39,9 @@ export default {
   data () {
     return {
       posts: [],
+      current_page : 1,
+      //TODO fix hardcoding
+      last_page : 5,
     };
   },
 
@@ -40,7 +49,7 @@ export default {
   },
 
   created () {
-    this.getData();
+    this.getData(0);
   },
 
   computed: {
@@ -48,18 +57,42 @@ export default {
   },
   
   methods: {
-    async getData() {
+    //Method overloading
+    async getData(pageNumber) {
+      const POSTS_PER_PAGE = 5;
       try {
         const response = await this.$http.get(
-          "http://localhost:3000/Authors/"
+          `http://localhost:3000/Articles?_page=${pageNumber}&_limit=${POSTS_PER_PAGE}`
         );
-        // JSON responses are automatically parsed.
         this.posts = response.data;
         console.log(this.posts);
       } catch (error) {
         console.log(error);
       }
     },
+
+    GoToNextPage(){
+      this.current_page += 1;
+      this.getData(this.current_page);
+    },
+
+    GoToPreviousPage(){
+      if(this.current_page != 1){
+        this.current_page -= 1;
+        this.getData(this.current_page);
+      }  
+    },
+
+    GoToFirstPage(){
+        this.current_page = 1;
+        this.getData(this.current_page);
+    },
+
+    GoToLastPage(){
+        this.current_page = this.last_page;
+        this.getData(this.current_page); 
+    }
+
   },
 
 }

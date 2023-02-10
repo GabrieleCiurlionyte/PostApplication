@@ -1,33 +1,46 @@
 <template>
     <div class="box">
         <!--Use v-for to go through all of the articles-->     
-        <article-box></article-box>   
+        <article-box v-for="post in posts" :key="post.id">
+            <template #title-slot>
+                <p class="title is-4">{{ post.title}}</p>
+            </template>
+            <template #author-slot>
+                <p class="subtitle is-4">{{ post.id }}</p>
+            </template>
+            <template #time-slot>
+                <p class="subtitle is-6">{{ post.created_at }}</p>
+            </template>
+        </article-box>   
     </div>
     
   </template>
   
   <script>
-  
-  import article_box from './articleBox'
+
+import article_box from './articleBox'
   
   export default {
     
     name: 'app',
     components: {
     "article-box": article_box,
-},
+    },
+    props: ['posts','authors'],
     data () {
       return {
         
       }
+    },
+
+    computed(){
+        //TODO return author name according to id
     }
 
-    //TODO created lifecycle hook from api to fetch data
   }
   </script>
   
   <style scoped>
-    @import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
     .box {
       display: block;
       width: 90%;
