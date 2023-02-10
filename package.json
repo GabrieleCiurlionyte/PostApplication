@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "inspect": "vue-cli-service inspect > current-webpack-settings.json"
   },
   "dependencies": {
     "bulma": "^0.9.4",
@@ -20,6 +21,9 @@
     "not ie <= 8"
   ],
   "devDependencies": {
+    "@types/sass": "^1.43.1",
+    "@types/sass-loader": "^8.0.3",
+    "@types/webpack": "^5.28.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",

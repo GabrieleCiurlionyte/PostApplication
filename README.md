@@ -15,7 +15,7 @@ npm run dev
 npm run build
 ```
 
-## to set up Json server
+## To set up Json server
 ``` bash
 # install json server
 npm install -g json-server
@@ -28,7 +28,7 @@ json-server db.js
 
 ```
 
-## to set up Bulma
+## To set up Bulma
 ``` bash
 npm install bulma
 ```
