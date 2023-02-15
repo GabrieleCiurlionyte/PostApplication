@@ -13,14 +13,26 @@
           </template>
         </search-bar>
 
-        <picture-button>
-          <template #icon-slot>
+
+        <button class="button is-primary" @click="showModal = true">
+          <span class="icon">
             <i class="fa-solid fa-plus"></i>
+          </span>
+          <span>Add new article</span>
+        </button>
+
+
+        <modal-window v-if="showModal" @close="showModal = false ">
+          <template #header>
+            <h1 class="title is-3">Create new article page</h1>
           </template>
-          <template #text-slot>
-            <span>Add new article</span>
+
+          <template #body>
+            <h1>Create new article page</h1>
           </template>
-        </picture-button>
+
+
+        </modal-window>
 
         <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
@@ -38,6 +50,7 @@ import paginationPage from "../modules/PostPage/paginationPage.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
 import pictureButton from "../common/pictureButton.vue";
+import modalWindow from "../common/modalWindow.vue"
 
 
 export default {
@@ -47,6 +60,7 @@ export default {
     'pagination-element' : paginationElement,
     'search-bar': searchBar,
     'picture-button': pictureButton,
+    'modal-window' : modalWindow,
   },
 
   props: [
@@ -61,7 +75,8 @@ export default {
       //TODO fix hardcoding
       last_page : 5,
       searchMode : false,
-      searchQuery : ""
+      searchQuery : "",
+      showModal : false,
     };
   },
 
