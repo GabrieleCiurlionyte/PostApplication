@@ -30,10 +30,16 @@
           <template #body>
             <h1>Create new article page</h1>
           </template>
-
-
         </modal-window>
+        
+        <article class="message is-info" id="no-post-message" v-if="!hasPosts">
+          <div class="message-body">
+            There are no posts currently... Try to add one..
+          </div>
+        </article>
 
+        <h2 class="subtitle is-2"></h2>
+        <template v-if="hasPosts">
         <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"
             @rerenderArticles=getData(0)></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
@@ -42,6 +48,9 @@
                             @GoToFirstPage="GoToFirstPage()"
                             :current_page="current_page"
                             :last_page="last_page"></pagination-element>
+        </template>
+        
+
     </div>
 </template>
 
@@ -92,6 +101,10 @@ export default {
   },
 
   computed: {
+    hasPosts: function(){
+      return (this.posts.length > 0 ? true : false);
+    },
+
     //Construct a method to extract all the author id's from posts object
     returnSetOfIDS: function(){
       let authorIDS = [];
@@ -206,6 +219,9 @@ export default {
   #search-bar {
     margin-left : 1rem auto 1rem;
     padding : 5rem;
+  }
+  #no-post-message {
+    margin: 5rem;
   }
   
 </style>
