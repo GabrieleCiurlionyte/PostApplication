@@ -1,12 +1,12 @@
 <template>
-    <div class="field">
-  <p class="control has-icons-left">
-    <slot name="input-slot"></slot>
-    <span class="icon is-small is-left">
+  <div class="field">
+    <p class="control has-icons-left">
+      <slot name="input-slot"></slot>
+      <span class="icon is-small is-left">
         <slot name="icon-slot"></slot>
-    </span>
-  </p>
-    </div>
+      </span>
+    </p>
+  </div>
 </template>
 
 <script>
@@ -15,13 +15,13 @@ export default {
   },
   props: [
   ],
-  data () {
+  data() {
     return {
     }
   },
-  mounted () {
+  mounted() {
   },
-  created () {
+  created() {
   },
   computed: {
   },
@@ -33,19 +33,19 @@ export default {
 </script>
 
 <style scoped>
-    .input {
-        width: 40%;
-    }
+.input {
+  width: 40%;
+}
 
-    .field{
-        display: inline;
-        margin: 0    
-    }
-    .control {
-        display: inline;
-        margin-left: 0.7rem;
-        width: 90%;
-        height: 70%;
-    }
+.field {
+  display: inline;
+  margin: 0
+}
 
+.control {
+  display: inline;
+  margin-left: 0.7rem;
+  width: 90%;
+  height: 70%;
+}
 </style>

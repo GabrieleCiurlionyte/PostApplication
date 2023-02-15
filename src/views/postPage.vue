@@ -1,14 +1,14 @@
 <template>
-    <div id="Page">
+  <div id="Page">
 
-      <!--Error message-->
-      <article class="message is-danger validation-msg" v-if="hasError">
+    <!--Error message-->
+    <article class="message is-danger validation-msg" v-if="hasError">
       <div class="message-header">
         <p>Error</p>
         <button class="delete" aria-label="delete" @click="hasError = false"></button>
       </div>
       <div class="message-body">
-        {{ errorMsg }} 
+        {{ errorMsg }}
       </div>
     </article>
 
@@ -23,60 +23,56 @@
       </div>
     </article>
 
-        <search-bar id="search-bar">
-          <template #input-slot>
-            <input class="input" type="search" placeholder="Search..."
-            v-model.lazy.trim="searchQuery"
-            @focusout="getSearchQuery(1)"
-            @keyup.enter="getSearchQuery(1)"
-            />
-          </template>
-          <template #icon-slot>
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </template>
-        </search-bar>
+    <search-bar id="search-bar">
+      <template #input-slot>
+        <input class="input" type="search" placeholder="Search..." v-model.lazy.trim="searchQuery"
+          @focusout="getSearchQuery(1)" @keyup.enter="getSearchQuery(1)" />
+      </template>
+      <template #icon-slot>
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </template>
+    </search-bar>
 
 
-        <button class="button is-primary" @click="showModal = true">
-          <span class="icon">
-            <i class="fa-solid fa-plus"></i>
-          </span>
-          <span>Add new article</span>
-        </button>
+    <button class="button is-primary" @click="showModal = true">
+      <span class="icon">
+        <i class="fa-solid fa-plus"></i>
+      </span>
+      <span>Add new article</span>
+    </button>
 
 
-        <modal-window v-if="showModal" @close="showModal = false ">
-          <template #header>
-            <h1 class="title is-3">Create new article page</h1>
-          </template>
+    <modal-window v-if="showModal" @close="showModal = false">
+      <template #header>
+        <h1 class="title is-3">Create new article page</h1>
+      </template>
 
-          <template #body>
-            <h1>Create new article page</h1>
-          </template>
-        </modal-window>
-        
-        <article class="message is-info" id="no-post-message" v-if="!hasPosts">
-          <div class="message-body">
-            There are no posts currently... Try to add one..
-          </div>
-        </article>
+      <template #author-slot>
+        <drop-down></drop-down>
+      </template>
 
-        <h2 class="subtitle is-2"></h2>
-        <template v-if="hasPosts">
-        <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"
-            @rerenderArticles=getData(0)
-            @unsuccessful="DisplayError($event)"
-            @successful="SuccessfulDelete($event)"></pagination-page>
-        <pagination-element @GoToNextPage="GoToNextPage()"
-                            @GoToPreviousPage="GoToPreviousPage()"
-                            @GoToLastPage="GoToLastPage()"
-                            @GoToFirstPage="GoToFirstPage()"
-                            :current_page="current_page"
-                            :last_page="last_paDangerge"></pagination-element>
-        </template>
-        
+      <template #body>
+        <h1>Create new article page</h1>
+      </template>
+    </modal-window>
 
-    </div>
+    <article class="message is-info" id="no-post-message" v-if="!hasPosts">
+      <div class="message-body">
+        There are no posts currently... Try to add one..
+      </div>
+    </article>
+
+    <h2 class="subtitle is-2"></h2>
+    <template v-if="hasPosts">
+      <pagination-page :posts="posts" :authors="returnsNeededAuthorIds" @rerenderArticles=getData(0)
+        @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"></pagination-page>
+      <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
+        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
+        :last_page="last_paDangerge"></pagination-element>
+    </template>
+
+
+  </div>
 </template>
 
 <script>
@@ -85,80 +81,61 @@ import paginationPage from "../modules/PostPage/paginationPage.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
 import pictureButton from "../common/pictureButton.vue";
-import modalWindow from "../common/modalWindow.vue"
+import modalWindow from "../common/modalWindow.vue";
+import dropDown from "../common/drop-down.vue"
 
 
 export default {
 
   components: {
     'pagination-page': paginationPage,
-    'pagination-element' : paginationElement,
+    'pagination-element': paginationElement,
     'search-bar': searchBar,
     'picture-button': pictureButton,
-    'modal-window' : modalWindow,
+    'modal-window': modalWindow,
+    'drop-down' : dropDown,
   },
 
   props: [
   ],
-  
-  data () {
+
+  data() {
     return {
       posts: [],
       authors: [],
-      POSTS_PER_PAGE : 4,
-      current_page : 1,
+      POSTS_PER_PAGE: 4,
+      current_page: 1,
       //TODO fix unsuccessfulDeletehardcoding
-      last_page : 5,
-      searchMode : false,
-      searchQuery : "",
-      showModal : false,
+      last_page: 5,
+      searchMode: false,
+      searchQuery: "",
+      showModal: false,
 
-      hasError : false,
-      errorMsg : "",
+      hasError: false,
+      errorMsg: "",
 
-      isSuccessful : false,
-      successMsg : "",
+      isSuccessful: false,
+      successMsg: "",
 
     };
   },
 
-  mounted () {
-    
+  mounted() {
+
   },
 
-  created () {
+  created() {
     this.searchMode = false;
     this.getData(0);
     this.getAuthors();
   },
 
   computed: {
-    hasPosts: function(){
+    hasPosts: function () {
       return (this.posts.length > 0 ? true : false);
-    },
-
-    //Construct a method to extract all the author id's from posts object
-    returnSetOfIDS: function(){
-      let authorIDS = [];
-      for(let post of this.posts){
-        authorIDS.push(post.author);
-      }
-      console.log("AUTHOR IDS");
-      console.log(authorIDS);
-      return authorIDS;
-    },
-
-    constructAuthorRequestString: function(){
-      const baseURL = "http://localhost:3000/Authors?"
-      for(i = 0; i < this.POSTS_PER_PAGE; i++) {
-        baseURL.concat(`id=${this.authorIDS[i]}&`);
-      }
-      return baseURL.slice(0,-1);
     }
-
-
   },
-  
+
   methods: {
 
     //TODO: whenever we clear the input field we go back to normal display mode or refresh page
@@ -166,9 +143,10 @@ export default {
     async getAuthors() {
       try {
         const response = await this.$http.get(
-          this.constructAuthorRequestString
+          `http://localhost:3000/Authors/`
         );
         this.authors = response.data;
+        console.log(this.authors);
       } catch (error) {
         console.log(error);
       }
@@ -189,7 +167,7 @@ export default {
 
 
     async getSearchQuery(pageNumber) {
-      if(this.searchQuery === ""){
+      if (this.searchQuery === "") {
         this.searchMode = false;
         this.current_page = 1;
         this.ExecuteAPICall();
@@ -210,48 +188,46 @@ export default {
 
 
     ExecuteAPICall() {
-      if(!(this.searchMode))
-      {
+      if (!(this.searchMode)) {
         this.getData(this.current_page);
       }
-      else
-      {
+      else {
         this.getSearchQuery(this.current_page, this.searchQuery);
       }
     },
 
-    GoToNextPage(){
+    GoToNextPage() {
       this.current_page += 1;
       this.ExecuteAPICall();
     },
 
-    GoToPreviousPage(){
-      if(this.current_page != 1){
+    GoToPreviousPage() {
+      if (this.current_page != 1) {
         this.current_page -= 1;
         this.ExecuteAPICall();
-      }  
+      }
     },
 
-    GoToFirstPage(){
-        this.current_page = 1;
-        this.ExecuteAPICall();
+    GoToFirstPage() {
+      this.current_page = 1;
+      this.ExecuteAPICall();
     },
 
-    GoToLastPage(){
-        this.current_page = this.last_page;
-        this.ExecuteAPICall();
+    GoToLastPage() {
+      this.current_page = this.last_page;
+      this.ExecuteAPICall();
     },
 
     DisplayError(msg) {
       this.hasError = true;
       this.errorMsg = msg;
-      setTimeout(() => {this.hasError = false}, 4000);
+      setTimeout(() => { this.hasError = false }, 4000);
     },
 
     DisplaySuccess(msg) {
       this.isSuccessful = true;
       this.successMsg = msg;
-      setTimeout(() => {this.isSuccessful = false}, 4000);
+      setTimeout(() => { this.isSuccessful = false }, 4000);
     },
 
     SuccessfulDelete(msg) {
@@ -265,19 +241,20 @@ export default {
 </script>
 
 <style scoped>
-  #search-bar {
-    margin-left : 1rem auto 1rem;
-    padding : 5rem;
-  }
-  #no-post-message {
-    margin: 5rem;
-  }
-  .validation-msg{
-    position: absolute;
-    z-index: 999999;
-    width: 60%;
-    margin-left: 20vw;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  }
-  
+#search-bar {
+  margin-left: 1rem auto 1rem;
+  padding: 5rem;
+}
+
+#no-post-message {
+  margin: 5rem;
+}
+
+.validation-msg {
+  position: absolute;
+  z-index: 999999;
+  width: 60%;
+  margin-left: 20vw;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
 </style>

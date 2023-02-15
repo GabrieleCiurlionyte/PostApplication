@@ -7,7 +7,7 @@
 module.exports = () => {
   var casual = require('casual');
 
-  const GENERATED_AUTHOR_AMOUNT = 20;
+  const GENERATED_AUTHOR_AMOUNT = 5;
   const GENERATED_ARTICLE_AMOUNT = 25;
 
   const data = {
@@ -39,7 +39,7 @@ module.exports = () => {
   }
 
   //Generates authors
-  for (let i = 1; i < GENERATED_AUTHOR_AMOUNT; i++) {
+  for (let i = 1; i <= GENERATED_AUTHOR_AMOUNT; i++) {
     let creationTimeUnix = casual.unix_time;
     let updateTimeUnix = generateValidUpdateTime(creationTimeUnix);
     data.Authors.push({
@@ -51,7 +51,7 @@ module.exports = () => {
   }
 
   //Generates articles
-  for (let i = 1; i < GENERATED_ARTICLE_AMOUNT; i++) {
+  for (let i = 1; i <= GENERATED_ARTICLE_AMOUNT; i++) {
     let creationTimeUnix = casual.unix_time;
     let updateTimeUnix = generateValidUpdateTime(creationTimeUnix);
     data.Articles.push({
