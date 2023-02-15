@@ -1,5 +1,28 @@
 <template>
     <div id="Page">
+
+      <!--Error message-->
+      <article class="message is-danger validation-msg" v-if="hasError">
+      <div class="message-header">
+        <p>Error</p>
+        <button class="delete" aria-label="delete" @click="hasError = false"></button>
+      </div>
+      <div class="message-body">
+        {{ errorMsg }} 
+      </div>
+    </article>
+
+    <!--Successfull message-->
+    <article class="message is-success validation-msg" v-if="isSuccessful">
+      <div class="message-header">
+        <p>Success</p>
+        <button class="delete" aria-label="delete" @click="isSuccessful = false"></button>
+      </div>
+      <div class="message-body">
+        {{ successMsg }}
+      </div>
+    </article>
+
         <search-bar id="search-bar">
           <template #input-slot>
             <input class="input" type="search" placeholder="Search..."
@@ -41,13 +64,15 @@
         <h2 class="subtitle is-2"></h2>
         <template v-if="hasPosts">
         <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"
-            @rerenderArticles=getData(0)></pagination-page>
+            @rerenderArticles=getData(0)
+            @unsuccessful="DisplayError($event)"
+            @successful="SuccessfulDelete($event)"></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
                             @GoToPreviousPage="GoToPreviousPage()"
                             @GoToLastPage="GoToLastPage()"
                             @GoToFirstPage="GoToFirstPage()"
                             :current_page="current_page"
-                            :last_page="last_page"></pagination-element>
+                            :last_page="last_paDangerge"></pagination-element>
         </template>
         
 
@@ -82,11 +107,18 @@ export default {
       authors: [],
       POSTS_PER_PAGE : 4,
       current_page : 1,
-      //TODO fix hardcoding
+      //TODO fix unsuccessfulDeletehardcoding
       last_page : 5,
       searchMode : false,
       searchQuery : "",
       showModal : false,
+
+      hasError : false,
+      errorMsg : "",
+
+      isSuccessful : false,
+      successMsg : "",
+
     };
   },
 
@@ -208,6 +240,23 @@ export default {
     GoToLastPage(){
         this.current_page = this.last_page;
         this.ExecuteAPICall();
+    },
+
+    DisplayError(msg) {
+      this.hasError = true;
+      this.errorMsg = msg;
+      setTimeout(() => {this.hasError = false}, 4000);
+    },
+
+    DisplaySuccess(msg) {
+      this.isSuccessful = true;
+      this.successMsg = msg;
+      setTimeout(() => {this.isSuccessful = false}, 4000);
+    },
+
+    SuccessfulDelete(msg) {
+      this.getData(0);
+      this.DisplaySuccess(msg);
     }
 
   },
@@ -222,6 +271,13 @@ export default {
   }
   #no-post-message {
     margin: 5rem;
+  }
+  .validation-msg{
+    position: absolute;
+    z-index: 999999;
+    width: 60%;
+    margin-left: 20vw;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   }
   
 </style>

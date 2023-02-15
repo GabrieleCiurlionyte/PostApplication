@@ -42,15 +42,12 @@ import article_box from './articleBox'
         const response = await this.$http.delete(
           `http://localhost:3000/Articles/${postID}`
         );
-        this.$emit('rerenderArticles');
+        this.$emit('successful', 'The delete was successful!');
       } catch (error) {
         console.log(error);
+        this.$emit('unsuccessful', 'Unsuccessful delete. Please try again.');
       }
-
-      //TODO: notify user that deletion succesful
-
-      
-
+ 
       },
 
       editArticle: function(postID){
