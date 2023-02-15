@@ -34,7 +34,8 @@
 
         </modal-window>
 
-        <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"></pagination-page>
+        <pagination-page :posts="posts" :authors="returnsNeededAuthorIds"
+            @rerenderArticles=getData(0)></pagination-page>
         <pagination-element @GoToNextPage="GoToNextPage()"
                             @GoToPreviousPage="GoToPreviousPage()"
                             @GoToLastPage="GoToLastPage()"

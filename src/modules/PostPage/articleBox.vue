@@ -13,7 +13,7 @@
         </div>
 
         <!--Edit button-->
-        <button class="button is-primary">
+        <button class="button is-primary" @click="editArticle">
             <span>Edit</span>
             <span class="icon is-small">
                 <i class="fa-solid fa-pen"></i>
@@ -21,7 +21,7 @@
         </button>
 
         <!--Delete button-->
-        <button class="button is-danger">
+        <button class="button is-danger" @click="deleteArticle">
             <span>Delete</span>
             <span class="icon is-small">
             <i class="fas fa-times"></i>
@@ -38,6 +38,15 @@
       data () {
         return {
           
+        }
+      },
+
+      methods: {
+        deleteArticle: function(){
+          this.$emit('deleteArticle');
+        },
+        editArticle: function(){
+          this.$emit('editArticle');
         }
       }
     }
