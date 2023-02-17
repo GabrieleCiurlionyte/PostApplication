@@ -4,13 +4,20 @@
 
       <div class="media">
         <div class="media-content">
-          <slot name=title-slot></slot>
-          <slot name=author-slot></slot>
+          <p class="title is-4"><slot name=title-slot></slot></p>
+          <p class="subtitle is-4"><slot name=author-slot></slot></p>
         </div>
       </div>
-      <slot name="content-slot"></slot>
-      <slot name="time-slot"></slot>
+      <p class="subtitle is-6"><slot name="content-slot"></slot></p>
+      <p class="subtitle is-6"><slot name="time-slot"></slot></p>
     </div>
+
+    <article-box>
+      
+      <template #time-slot>
+        <p class="subtitle is-6">Created at</p>
+      </template>
+    </article-box>
 
     <!--Edit button-->
     <button class="button is-primary" @click="editArticle">

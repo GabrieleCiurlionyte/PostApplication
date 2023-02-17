@@ -1,6 +1,7 @@
 <template>
   <div id="Page">
 
+    <h1 class="title is-1">Post page</h1>
     <system-message class="is-danger" v-if="hasError">
       <template #header-slot><p>Error</p></template>
       <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
@@ -284,5 +285,8 @@ export default {
   margin: 5rem;
 }
 
+h1 {
+  text-align: center;
+}
 
 </style>
