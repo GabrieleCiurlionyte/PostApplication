@@ -38,4 +38,9 @@ npm install bulma
 npm i axios
 ```
 
+## To set up vue-router
+```bash
+npm install vue-router@3.6.5
+```
+
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).

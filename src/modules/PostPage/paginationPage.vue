@@ -11,11 +11,11 @@
     
 
     <!--Use v-for to go through all of the articles-->
-    <article-box v-for="post in posts" :key="post.id" @deleteArticle="showConfirmationBox(post)"
+    <article-box v-for="post in posts" :key="post.id" :post="post" @deleteArticle="showConfirmationBox(post)"
       @editArticle="editArticle(post)">
       <template #title-slot>{{ post.title }}</template>
       <template #author-slot>{{ authorName(post) }}</template>
-      <template #time-slot>{{ post.created_at }}</template>
+      <template #time-slot>{{ post.created_at }}</template>  
     </article-box>
   </div>
 
@@ -23,7 +23,7 @@
 
 <script>
 
-import article_box from './articleBox';
+import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../../common/confirmationWindow.vue";
 
 
@@ -31,7 +31,7 @@ export default {
 
   name: 'app',
   components: {
-    "article-box": article_box,
+    "article-box": ArticleBox,
     "confirmation-window": confirmationWindow,
   },
   props: ['posts', 'authors'],
