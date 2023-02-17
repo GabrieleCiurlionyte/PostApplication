@@ -1,8 +1,19 @@
 <template>
   <div class="box">
+
+    <confirmation-window :class="{'is-active': showConfirmation}"
+        v-if="showConfirmation"
+        @CancelConfirmation="cancelConfirmation()"
+        @ConfirmConfirmation="confirmConfirmation()">
+        <template #text-slot>Do you really want to delete post? <br> 
+        Name: {{currentDeletionPost.title}} </template>
+    </confirmation-window>
+    
+
     <!--Use v-for to go through all of the articles-->
-    <article-box v-for="post in posts" :key="post.id" @deleteArticle="deleteArticle(post.id)"
+    <article-box v-for="post in posts" :key="post.id" @deleteArticle="showConfirmationBox(post)"
       @editArticle="editArticle(post.id)">
+
       <template #title-slot>
         <p class="title is-4">{{ post.title }}</p>
       </template>
@@ -19,18 +30,22 @@
 
 <script>
 
-import article_box from './articleBox'
+import article_box from './articleBox';
+import confirmationWindow from "../../common/confirmationWindow.vue";
+
 
 export default {
 
   name: 'app',
   components: {
     "article-box": article_box,
+    "confirmation-window": confirmationWindow,
   },
   props: ['posts', 'authors'],
   data() {
     return {
-
+      showConfirmation: false,
+      currentDeletionPost : null,
     }
   },
 
@@ -38,7 +53,23 @@ export default {
 
   },
 
+  
+
   methods: {
+
+    cancelConfirmation(){
+      this.showConfirmation = false;
+    },
+
+    confirmConfirmation(){
+      this.deleteArticle(this.currentDeletionPost.id);
+      this.showConfirmation = false;
+    },
+
+    showConfirmationBox(post) {
+      this.showConfirmation = true;
+      this.currentDeletionPost = post;
+    },
 
     authorName(post){
       let authorID = post.author;
