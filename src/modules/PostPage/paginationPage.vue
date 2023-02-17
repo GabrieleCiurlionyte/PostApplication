@@ -7,7 +7,7 @@
         <p class="title is-4">{{ post.title }}</p>
       </template>
       <template #author-slot>
-        <p class="subtitle is-4">{{ post.author }}</p>
+        <p class="subtitle is-4">{{ authorName(post) }}</p>
       </template>
       <template #time-slot>
         <p class="subtitle is-6">{{ post.created_at }}</p>
@@ -34,9 +34,18 @@ export default {
     }
   },
 
-  methods: {
-    deleteArticle: async function (postID) {
+  computed: {
 
+  },
+
+  methods: {
+
+    authorName(post){
+      let authorID = post.author;
+      return this.authors.filter((author) => author.id == authorID)[0].name;
+    },
+
+    deleteArticle: async function (postID) {
       try {
         const response = await this.$http.delete(
           `http://localhost:3000/Articles/${postID}`
@@ -54,8 +63,6 @@ export default {
     }
   },
 
-  computed() {
-  }
 
 }
 </script>

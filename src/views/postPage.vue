@@ -164,7 +164,6 @@ export default {
           `http://localhost:3000/Articles`
         );
         this.postsCount = response.data.length;
-        console.log("Total post coutn:" + this.postsCount)
       } catch (error) {
         console.log(error);
       }
