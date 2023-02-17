@@ -25,7 +25,7 @@
     </search-bar>
 
 
-    <button class="button is-primary" @click="showModal = true">
+    <button class="button is-primary" @click="CreateArticle">
       <span class="icon">
         <i class="fa-solid fa-plus"></i>
       </span>
@@ -36,7 +36,7 @@
     <modal-window v-if="showModal" @close="showModal = false" :posts="posts"
       :editablePost="editableArticle"
       :isModalEdit="IsModalEdit">
-      <template #header>
+      <template #header id="modal-header">
         {{ modalHeader }}
       </template>
 
@@ -147,6 +147,13 @@ export default {
   },
 
   methods: {
+
+    CreateArticle: function() {
+      this.modalHeader = "Add article";
+      this.isModalEdit = false;
+      console.log("create article");
+      this.showModal = true;
+    },
 
     EditArticle: function(post){
       this.editableArticle = post;

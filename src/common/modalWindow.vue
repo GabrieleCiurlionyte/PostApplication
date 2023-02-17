@@ -28,7 +28,7 @@
           <form>
 
             <label for="fTitle">Title:</label>
-            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" :placeholder="namePlaceholder"
+            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" placeholder="Enter your title..."
               required>
 
             <slot name="author-slot">
@@ -36,10 +36,10 @@
 
 
             <label for="fContent">Article Content:</label>
-            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" :placeholder="contentPlaceholder" rows="5" minlength="1"
+            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..." rows="5" minlength="1"
               required></textarea>
 
-            <button class="modal-default-button button is-primary" @click="validatePost()">Submit</button>
+            <button class="modal-default-button button is-primary" @click="takeAction()">Submit</button>
 
           </form>
         </div>
@@ -98,6 +98,18 @@ export default {
   },
 
   methods: {
+
+    takeAction : function(){
+      if(this.isModalEdit) {
+        //Send a patch request for editablePost
+        console.log("patch request.");
+      }
+      else {
+        //Send a post request
+        console.log("post request.");
+      }
+    },
+
     //TODO: complete
     validatePost: async function(){
       if(!this.title) {
@@ -140,6 +152,7 @@ export default {
 </script>
 
 <style scoped>
+
 
 #error-message{
   display: absolute;
