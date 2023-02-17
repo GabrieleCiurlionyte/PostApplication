@@ -57,11 +57,11 @@
 
     <h2 class="subtitle is-2"></h2>
     <template v-if="hasPosts">
-      <pagination-page :posts="posts" :authors="returnsNeededAuthorIds" @rerenderArticles=getData(0)
+      <pagination-page :posts="posts" :authors="authors" @rerenderArticles=getData(0)
         @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"></pagination-page>
       <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
         @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
-        :last_page="last_paDangerge"></pagination-element>
+        :last_page="last_page"></pagination-element>
     </template>
 
 
@@ -96,12 +96,13 @@ export default {
 
   data() {
     return {
+
       posts: [],
+      postsCount : 0,
       authors: [],
       POSTS_PER_PAGE: 4,
       current_page: 1,
-      //TODO fix unsuccessfulDeletehardcoding
-      last_page: 5,
+         
       searchMode: false,
       searchQuery: "",
       showModal: false,
@@ -120,15 +121,25 @@ export default {
   },
 
   created() {
+    this.getDataCount();
     this.searchMode = false;
     this.getData(0);
     this.getAuthors();
   },
 
   computed: {
-    hasPosts: function () {
+
+    hasPosts() {
       return (this.posts.length > 0 ? true : false);
-    }
+    },
+
+    last_page(){
+      this.getDataCount();
+      var quotient = Math.floor(this.postsCount/this.POSTS_PER_PAGE);
+      var remainder = this.postsCount % this.POSTS_PER_PAGE;
+      console.log((remainder == 0 ? quotient : quotient + 1));
+      return (remainder == 0 ? quotient : quotient + 1);
+    },
   },
 
   methods: {
@@ -142,6 +153,18 @@ export default {
         );
         this.authors = response.data;
         console.log(this.authors);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async getDataCount(){
+      try {
+        const response = await this.$http.get(
+          `http://localhost:3000/Articles`
+        );
+        this.postsCount = response.data.length;
+        console.log("Total post coutn:" + this.postsCount)
       } catch (error) {
         console.log(error);
       }
