@@ -13,9 +13,10 @@
         <div class="modal-header">
           <div class="tile is-ancestor">
             <div class="tile is-12">
-              <slot name="header">
+              <h1 class="title is-3"><slot name="header">
                 default header
-              </slot>
+              </slot></h1>
+              
             </div>
             <div class="tile" id="closeButton" @click="$emit('close')">
               <i class="fa-solid fa-x"></i>
@@ -27,7 +28,7 @@
           <form>
 
             <label for="fTitle">Title:</label>
-            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" placeholder="Enter article title"
+            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" :placeholder="namePlaceholder"
               required>
 
             <slot name="author-slot">
@@ -35,7 +36,7 @@
 
 
             <label for="fContent">Article Content:</label>
-            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter article text" rows="5" minlength="1"
+            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" :placeholder="contentPlaceholder" rows="5" minlength="1"
               required></textarea>
 
             <button class="modal-default-button button is-primary" @click="validatePost()">Submit</button>
@@ -60,7 +61,7 @@ export default {
   components: {
     'system-message': systemMessage,
   },
-  props:['posts'],
+  props:['posts', 'editablePost', 'isModalEdit'],
 
   updated(){
     bus.$on('AuthorSelected', (data) => {
@@ -71,27 +72,32 @@ export default {
   data() {
     return {
 
-      MAXIMUM_DB_AMOUNT : 64000,
-
-      createMode : true,
-
       title : "",
       author :"",
       content : "",
-
       hasError : false,
-      errorMsg : "",
-
-      
+      errorMsg : "", 
     }
   },
 
   computed: {
 
+    
+
+  },
+
+  created(){
+    if(this.isModalEdit){
+      this.title = this.editablePost.title;
+      this.content = this.editablePost.body;
+    }
+    else {
+      this.title ="";
+      this.content="";
+    }
   },
 
   methods: {
-
     //TODO: complete
     validatePost: async function(){
       if(!this.title) {
@@ -125,8 +131,8 @@ export default {
         });
         
       }
-      
-    }
+    },
+
   }
 
 

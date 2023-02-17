@@ -12,7 +12,7 @@
 
     <!--Use v-for to go through all of the articles-->
     <article-box v-for="post in posts" :key="post.id" @deleteArticle="showConfirmationBox(post)"
-      @editArticle="editArticle(post.id)">
+      @editArticle="editArticle(post)">
 
       <template #title-slot>
         <p class="title is-4">{{ post.title }}</p>
@@ -88,10 +88,9 @@ export default {
       }
 
     },
-
-    editArticle: function (postID) {
-      console.log("Update triggered for " + postID)
-    }
+    editArticle: function (post) {
+      this.$emit('EditArticle', post);
+    },
   },
 
 

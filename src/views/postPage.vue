@@ -33,19 +33,17 @@
     </button>
 
 
-    <modal-window v-if="showModal" @close="showModal = false" :posts="posts">
+    <modal-window v-if="showModal" @close="showModal = false" :posts="posts"
+      :editablePost="editableArticle"
+      :isModalEdit="IsModalEdit">
       <template #header>
-        <h1 class="title is-3">Create new article page</h1>
+        {{ modalHeader }}
       </template>
 
-      <template #author-slot>
+      <template #author-slot v-if="!IsModalEdit">
         <label for="author-drop-down">Select author:</label>
         <drop-down id="author-drop-down" :authors="authors">
         </drop-down>
-      </template>
-
-      <template #body>
-        <h1>Create new article page</h1>
       </template>
     </modal-window>
 
@@ -58,7 +56,8 @@
     <h2 class="subtitle is-2"></h2>
     <template v-if="hasPosts">
       <pagination-page :posts="posts" :authors="authors" @rerenderArticles=getData(0)
-        @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"></pagination-page>
+        @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"
+        @EditArticle="EditArticle($event)"></pagination-page>
       <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
         @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
         :last_page="last_page"></pagination-element>
@@ -102,10 +101,15 @@ export default {
       authors: [],
       POSTS_PER_PAGE: 4,
       current_page: 1,
+
+      editableArticle: null,
+      //Modal window properties
+      showModal: false,
+      IsModalEdit : false,
+      modalHeader : "Default header",
          
       searchMode: false,
       searchQuery: "",
-      showModal: false,
 
       hasError: false,
       errorMsg: "",
@@ -144,8 +148,14 @@ export default {
 
   methods: {
 
-    //TODO: whenever we clear the input field we go back to normal display mode or refresh page
+    EditArticle: function(post){
+      this.editableArticle = post;
+      this.modalHeader = "Edit article";
+      this.IsModalEdit = true;
+      this.showModal = true;
+    },
 
+    //TODO: whenever we clear the input field we go back to normal display mode or refresh page
     async getAuthors() {
       try {
         const response = await this.$http.get(
