@@ -4,6 +4,12 @@
     <div class="modal-wrapper">
       <div class="modal-container">
 
+        <system-message id="error-message" class="is-danger" v-if="hasError">
+          <template #header-slot><p>Incorrect input</p></template>
+          <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
+          <template #body-slot>{{ errorMsg }}</template>
+        </system-message>
+
         <div class="modal-header">
           <div class="tile is-ancestor">
             <div class="tile is-12">
@@ -19,20 +25,20 @@
 
         <div class="modal-body">
           <form>
-            <!--TODO: Form for title-->
+
             <label for="fTitle">Title:</label>
-            <input class="input is-normal" id="fTitle" type="text" minlength="1" placeholder="Enter article title"
+            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" placeholder="Enter article title"
               required>
 
             <slot name="author-slot">
             </slot>
 
-            <!--TODO: Form for content-->
+
             <label for="fContent">Article Content:</label>
-            <textarea id="fContent" class="textarea" placeholder="Enter article text" rows="5" minlength="1"
+            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter article text" rows="5" minlength="1"
               required></textarea>
 
-            <button class="modal-default-button button is-primary" @click="$emit('close')">Submit</button>
+            <button class="modal-default-button button is-primary" @click="validatePost()">Submit</button>
 
           </form>
         </div>
@@ -44,25 +50,99 @@
 
 <script>
 
+
+import {bus} from "../main";
+import systemMessage from "./systemMessage.vue";
+
 export default {
 
   name: 'modalWindow',
   components: {
-
+    'system-message': systemMessage,
   },
+  props:['posts'],
+
+  updated(){
+    bus.$on('AuthorSelected', (data) => {
+      this.author = data;
+    })
+  },
+
   data() {
     return {
 
+      MAXIMUM_DB_AMOUNT : 64000,
+
+      createMode : true,
+
+      title : "",
+      author :"",
+      content : "",
+
+      hasError : false,
+      errorMsg : "",
+
+      
     }
   },
 
-  computed() {
+  computed: {
+
+  },
+
+  methods: {
+
+    //TODO: complete
+    validatePost: async function(){
+      if(!this.title) {
+        this.hasError = true;
+        this.errorMsg = "The title field is empty!";
+      }
+      else if(!this.author){
+        this.hasError = true;
+        this.errorMsg = "Author not selected!";
+      }
+      else if(!this.content){
+        this.hasError = true;
+        this.errorMsg = "Content field is empty!";
+      }
+      else {
+        let date = new Date().toString();
+        
+        //Sending a post request:
+        await this.$http.post('http://localhost:3000//Articles', {
+          title : this.title,
+          body : this.body,
+          author : this.author,
+          created_at : date,
+          updated_at : date,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        
+      }
+      
+    }
   }
+
 
 }
 </script>
 
 <style scoped>
+
+#error-message{
+  display: absolute;
+  margin-left: 0.5rem;
+  margin-top: -3.12rem;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+
 #closeButton {
   position: absolute;
   margin-top: -2.5vh;

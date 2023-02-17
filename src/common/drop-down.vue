@@ -1,8 +1,12 @@
 <template>
-    <div class="dropdown is-active">
+    <div class="dropdown"
+        :class="{ 'is-active': isActive }">
         <div class="dropdown-trigger">
-            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                <span>Dropdown button</span>
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu"
+                @click="isActive = !isActive">  
+
+                <span>{{ ButtonName }}</span>
+
                 <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true"></i>
                 </span>
@@ -10,22 +14,13 @@
         </div>
         <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                    Dropdown item
+                
+                <a class="dropdown-item" v-for="author in authors" :key="author.id"
+                    @click="SelectAuthor(author)"
+                    :class="CheckCurrent">
+                    {{ author.name }}
                 </a>
-                <a class="dropdown-item">
-                    Other dropdown item
-                </a>
-                <a href="#" class="dropdown-item is-active">
-                    Active dropdown item
-                </a>
-                <a href="#" class="dropdown-item">
-                    Other dropdown item
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    With a divider
-                </a>
+                
             </div>
         </div>
         
@@ -33,13 +28,19 @@
 </template>
 
 <script>
+import {bus} from "../main"
 export default {
     components: {
     },
     props: [
+        'authors',
     ],
     data() {
         return {
+            ButtonName : "Select author",
+            isActive : false, 
+            selectedAuthor : null,
+            isSelected : false,
         }
     },
     mounted() {
@@ -47,8 +48,25 @@ export default {
     created() {
     },
     computed: {
+        
+         
     },
     methods: {
+        SelectAuthor : function(author){
+            this.selectedAuthor = author;
+            this.ButtonName = author.name;
+            this.isSelected = true;
+            this.isActive = false;
+            bus.$emit('AuthorSelected', author);
+        },
+
+        CheckCurrent : function(authorID) {
+            if(authorID == this.selectedID) {
+                return { 'is-active' : isSelected}
+            }
+        }
+
+
     },
     watch: {
     }
@@ -58,6 +76,5 @@ export default {
 <style scoped>
     .dropdown {
         display: block;
-        margin-top: 10px;
     }
 </style>

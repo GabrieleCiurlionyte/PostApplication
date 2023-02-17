@@ -1,27 +1,18 @@
 <template>
   <div id="Page">
 
-    <!--Error message-->
-    <article class="message is-danger validation-msg" v-if="hasError">
-      <div class="message-header">
-        <p>Error</p>
-        <button class="delete" aria-label="delete" @click="hasError = false"></button>
-      </div>
-      <div class="message-body">
-        {{ errorMsg }}
-      </div>
-    </article>
+    <system-message class="is-danger" v-if="hasError">
+      <template #header-slot><p>Error</p></template>
+      <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
+      <template #body-slot>{{ errorMsg }}</template>
+    </system-message>
 
-    <!--Successfull message-->
-    <article class="message is-success validation-msg" v-if="isSuccessful">
-      <div class="message-header">
-        <p>Success</p>
-        <button class="delete" aria-label="delete" @click="isSuccessful = false"></button>
-      </div>
-      <div class="message-body">
-        {{ successMsg }}
-      </div>
-    </article>
+    <system-message class="is-success" v-if="isSuccessful">
+      <template #header-slot><p>Success</p></template>
+      <template #button-slot><button class="delete" aria-label="delete" @click="isSuccessful = false"></button></template>
+      <template #body-slot>{{ successMsg }}</template>
+    </system-message>
+
 
     <search-bar id="search-bar">
       <template #input-slot>
@@ -42,13 +33,15 @@
     </button>
 
 
-    <modal-window v-if="showModal" @close="showModal = false">
+    <modal-window v-if="showModal" @close="showModal = false" :posts="posts">
       <template #header>
         <h1 class="title is-3">Create new article page</h1>
       </template>
 
       <template #author-slot>
-        <drop-down></drop-down>
+        <label for="author-drop-down">Select author:</label>
+        <drop-down id="author-drop-down" :authors="authors">
+        </drop-down>
       </template>
 
       <template #body>
@@ -82,7 +75,8 @@ import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
 import pictureButton from "../common/pictureButton.vue";
 import modalWindow from "../common/modalWindow.vue";
-import dropDown from "../common/drop-down.vue"
+import dropDown from "../common/drop-down.vue";
+import systemMessage from "../common/systemMessage.vue";
 
 
 export default {
@@ -94,6 +88,7 @@ export default {
     'picture-button': pictureButton,
     'modal-window': modalWindow,
     'drop-down' : dropDown,
+    'system-message' : systemMessage,
   },
 
   props: [
@@ -250,11 +245,5 @@ export default {
   margin: 5rem;
 }
 
-.validation-msg {
-  position: absolute;
-  z-index: 999999;
-  width: 60%;
-  margin-left: 20vw;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-}
+
 </style>
