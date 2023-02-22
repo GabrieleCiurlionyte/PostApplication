@@ -1,22 +1,22 @@
 
   <template>
-    <article class="message validation-msg">
+    <article class="message validation-msg" :class="{'is-danger':!isSuccessful, 'is-success': isSuccessful}">
         <div class="message-header">
-          <slot name="header-slot"></slot>
+          <p>{{ messageHeader }}</p>
           <slot name="button-slot"></slot>
         </div>
         <div class="message-body">
-            <slot class="message-body" name="body-slot"></slot> 
+            {{ messageBody }}
           </div>
       </article>
   </template>
+
   
   <script>
   export default {
     components: {
     },
-    props: [
-    ],
+    props: ['isSuccessful', 'operationName'],
     data() {
       return {
       }
@@ -26,6 +26,12 @@
     created() {
     },
     computed: {
+      messageHeader() {
+        return (this.isSuccessful ? "Success" : "Error");
+      },
+      messageBody(){
+        return ( this.isSuccessful ? "Sucessful deletion" : "Unsuccessful deletion");
+      }
     },
     methods: {
     },

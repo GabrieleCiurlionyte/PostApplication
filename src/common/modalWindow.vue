@@ -143,6 +143,7 @@ export default {
     takeAction: function () {
       if (this.isModalEdit) {
         //Send a patch request for editablePost
+        console.log("Patch request");
         this.patchRequest();
 
       }
