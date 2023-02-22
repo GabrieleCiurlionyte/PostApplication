@@ -25,6 +25,7 @@
 
 import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../../common/confirmationWindow.vue";
+import { DeleteArticleCall } from '../../common/Mixins/DeleteArticleCall';
 
 
 export default {
@@ -34,6 +35,7 @@ export default {
     "article-box": ArticleBox,
     "confirmation-window": confirmationWindow,
   },
+  mixins:[DeleteArticleCall],
   props: ['posts', 'authors'],
   data() {
     return {
@@ -69,18 +71,7 @@ export default {
       return this.authors.filter((author) => author.id == authorID)[0].name;
     },
 
-    deleteArticle: async function (postID) {
-      try {
-        const response = await this.$http.delete(
-          `http://localhost:3000/Articles/${postID}`
-        );
-        this.$emit('successful', 'The delete was successful!');
-      } catch (error) {
-        console.log(error);
-        this.$emit('unsuccessful', 'Unsuccessful delete. Please try again.');
-      }
-
-    },
+    
     editArticle: function (post) {
       this.$emit('EditArticle', post);
     },

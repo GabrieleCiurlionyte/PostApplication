@@ -30,7 +30,7 @@
         </div>
 
         <div class="modal-body">
-          <form>
+          
 
             <label for="fTitle">Title:</label>
             <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1"
@@ -46,7 +46,7 @@
 
             <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
 
-          </form>
+          
         </div>
       </div>
     </div>
@@ -116,8 +116,6 @@ export default {
     },
 
     author: function (value) {
-      console.log("Watcher activated");
-
       if (!this.author) {
         this.hasError = true;
         this.errorMsg = "Author not selected!";
@@ -128,8 +126,6 @@ export default {
     },
 
     content: function (value) {
-      console.log("Watcher activated");
-
       if (!this.content) {
         this.hasError = true;
         this.errorMsg = "Content field is empty!";
@@ -147,59 +143,46 @@ export default {
     takeAction: function () {
       if (this.isModalEdit) {
         //Send a patch request for editablePost
-        console.log("patch request.");
+        this.patchRequest();
 
       }
       else {
         //Send a post request
-        console.log("post request.");
         this.validatePost();
         
       }
     },
 
-    //TODO: complete
     validatePost: async function () {
-      /*
-      if(!this.title && !this.author && !this.content) {
-        this.hasError = true;
-        this.errorMsg = "The title field is empty!";
-      }
-      else if(!this.author){
-        this.hasError = true;
-        this.errorMsg = "Author not selected!";
-      }
-      else if(!this.content){
-        this.hasError = true;
-        this.errorMsg = "Content field is empty!";
-
-      }
-      else {*/
-
       if (!this.title || !this.author || !this.content) {
         this.hasError = true;
         this.errorMsg = "There are empty fields!";
       }
-
-      // setTimeout(console.log("Correct validation: " + !this.hasError), 5000);
       if (!this.hasError) {
         let date = new Date().toString();
-        let article = {
+        //Sending a post request:
+        this.$http.post('http://localhost:3000/Articles', { 
           title: this.title,
           body: this.content,
           author: this.author.id,
-          created_at: '2023-02-22',
-          updated_at: '2023-02-22'
-        }
-        console.log(article)
-        //Sending a post request:
-        this.$http.post('http://localhost:3000/Articles', { article })
-        .then( r => {console.log(r)})
-        .catch(error => {console.log(error)})
+          created_at: date,
+          updated_at: date
+        })
+        .catch(error => {console.log(error)});
       }
+    },
 
-
+    //TODO:
+    patchRequest : async function(){
+      if(!this.hasError){
+        this.$http.patchRequest('http://localhost:3000/Articles', { 
+          
+        })
+        .catch(error => {console.log(error)});
+      }
     }
+
+
   },
 
 }
@@ -213,7 +196,6 @@ export default {
   margin-top: -3.12rem;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
-
 
 #closeButton {
   position: absolute;
