@@ -77,6 +77,7 @@ import pictureButton from "../common/pictureButton.vue";
 import modalWindow from "../common/modalWindow.vue";
 import dropDown from "../common/drop-down.vue";
 import systemMessage from "../common/systemMessage.vue";
+import { APICallsMixin } from "../common/Mixins/APICallsMixin";
 
 
 export default {
@@ -90,6 +91,8 @@ export default {
     'drop-down' : dropDown,
     'system-message' : systemMessage,
   },
+
+  mixins:[APICallsMixin],
 
   props: [
   ],
@@ -162,20 +165,6 @@ export default {
       this.IsModalEdit = true;
       this.showModal = true;
     },
-
-    //TODO: whenever we clear the input field we go back to normal display mode or refresh page
-    async getAuthors() {
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Authors/`
-        );
-        this.authors = response.data;
-        console.log(this.authors);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
     async getDataCount(){
       try {
         const response = await this.$http.get(

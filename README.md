@@ -43,4 +43,9 @@ npm i axios
 npm install vue-router@3.6.5
 ```
 
+## To set up vue-debounce
+```bash
+npm i vue-debounce
+```
+
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).

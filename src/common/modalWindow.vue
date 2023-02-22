@@ -5,18 +5,23 @@
       <div class="modal-container">
 
         <system-message id="error-message" class="is-danger" v-if="hasError">
-          <template #header-slot><p>Incorrect input</p></template>
-          <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
+          <template #header-slot>
+            <p>Incorrect input</p>
+          </template>
+          <template #button-slot><button class="delete" aria-label="delete"
+              @click="hasError = false"></button></template>
           <template #body-slot>{{ errorMsg }}</template>
         </system-message>
 
         <div class="modal-header">
           <div class="tile is-ancestor">
             <div class="tile is-12">
-              <h1 class="title is-3"><slot name="header">
-                default header
-              </slot></h1>
-              
+              <h1 class="title is-3">
+                <slot name="header">
+                  default header
+                </slot>
+              </h1>
+
             </div>
             <div class="tile" id="closeButton" @click="$emit('close')">
               <i class="fa-solid fa-x"></i>
@@ -28,18 +33,18 @@
           <form>
 
             <label for="fTitle">Title:</label>
-            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1" placeholder="Enter your title..."
-              required>
+            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1"
+              placeholder="Enter your title..." required>
 
             <slot name="author-slot">
             </slot>
 
 
             <label for="fContent">Article Content:</label>
-            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..." rows="5" minlength="1"
-              required></textarea>
+            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..."
+              rows="5" minlength="1" required></textarea>
 
-            <button class="modal-default-button button is-primary" @click="takeAction()">Submit</button>
+            <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
 
           </form>
         </div>
@@ -52,7 +57,7 @@
 <script>
 
 
-import {bus} from "../main";
+import { bus } from "../main";
 import systemMessage from "./systemMessage.vue";
 
 export default {
@@ -61,9 +66,9 @@ export default {
   components: {
     'system-message': systemMessage,
   },
-  props:['posts', 'editablePost', 'isModalEdit'],
+  props: ['posts', 'editablePost', 'isModalEdit'],
 
-  updated(){
+  updated() {
     bus.$on('AuthorSelected', (data) => {
       this.author = data;
     })
@@ -72,47 +77,91 @@ export default {
   data() {
     return {
 
-      title : "",
-      author :"",
-      content : "",
-      hasError : false,
-      errorMsg : "", 
+      title: "",
+      author: "",
+      content: "",
+      hasError: false,
+      errorMsg: "",
     }
   },
 
   computed: {
 
-    
+
 
   },
 
-  created(){
-    if(this.isModalEdit){
+  created() {
+    if (this.isModalEdit) {
       this.title = this.editablePost.title;
       this.content = this.editablePost.body;
     }
     else {
-      this.title ="";
-      this.content="";
+      this.title = "";
+      this.content = "";
     }
+  },
+
+  watch: {
+    title: function (value) {
+      console.log("Watcher activated");
+      if (!this.title) {
+        this.hasError = true;
+        this.errorMsg = "The title field is empty!";
+      }
+      else {
+        this.hasError = false;
+      }
+
+    },
+
+    author: function (value) {
+      console.log("Watcher activated");
+
+      if (!this.author) {
+        this.hasError = true;
+        this.errorMsg = "Author not selected!";
+      }
+      else {
+        this.hasError = false;
+      }
+    },
+
+    content: function (value) {
+      console.log("Watcher activated");
+
+      if (!this.content) {
+        this.hasError = true;
+        this.errorMsg = "Content field is empty!";
+      }
+      else {
+        this.hasError = false;
+      }
+    },
+
+
   },
 
   methods: {
 
-    takeAction : function(){
-      if(this.isModalEdit) {
+    takeAction: function () {
+      if (this.isModalEdit) {
         //Send a patch request for editablePost
         console.log("patch request.");
+
       }
       else {
         //Send a post request
         console.log("post request.");
+        this.validatePost();
+        
       }
     },
 
     //TODO: complete
-    validatePost: async function(){
-      if(!this.title) {
+    validatePost: async function () {
+      /*
+      if(!this.title && !this.author && !this.content) {
         this.hasError = true;
         this.errorMsg = "The title field is empty!";
       }
@@ -123,38 +172,42 @@ export default {
       else if(!this.content){
         this.hasError = true;
         this.errorMsg = "Content field is empty!";
+
       }
-      else {
+      else {*/
+
+      if (!this.title || !this.author || !this.content) {
+        this.hasError = true;
+        this.errorMsg = "There are empty fields!";
+      }
+
+      // setTimeout(console.log("Correct validation: " + !this.hasError), 5000);
+      if (!this.hasError) {
         let date = new Date().toString();
-        
+        let article = {
+          title: this.title,
+          body: this.content,
+          author: this.author.id,
+          created_at: '2023-02-22',
+          updated_at: '2023-02-22'
+        }
+        console.log(article)
         //Sending a post request:
-        await this.$http.post('http://localhost:3000//Articles', {
-          title : this.title,
-          body : this.body,
-          author : this.author,
-          created_at : date,
-          updated_at : date,
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-        
+        this.$http.post('http://localhost:3000/Articles', { article })
+        .then( r => {console.log(r)})
+        .catch(error => {console.log(error)})
       }
-    },
 
-  }
 
+    }
+  },
 
 }
+
 </script>
 
 <style scoped>
-
-
-#error-message{
+#error-message {
   display: absolute;
   margin-left: 0.5rem;
   margin-top: -3.12rem;

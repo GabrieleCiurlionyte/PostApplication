@@ -24,17 +24,20 @@
   
   <script>
   import articleBox from "../modules/PostPage/articleBox.vue";
+  import {APICallsMixin} from "../common/Mixins/APICallsMixin";
 
   export default {
     components: {
         "article-box":articleBox,
     },
+    mixins: [APICallsMixin],
     props: [
     ],
     data() {
       return {
         postID : this.$route.params.id,
         post : null,
+        authors : null,
       }
     },
     mounted() {
@@ -42,22 +45,13 @@
 
     created() {
         this.getData();
+        this.getAuthors();
     },
 
     computed: {
     },
     methods: {
-        async getData() {
-        try {
-            const response = await this.$http.get(
-            `http://localhost:3000/Articles/${this.postID}`
-            );
-            this.post = response.data;
-            console.log(this.post);
-        } catch (error) {
-            console.log(error);
-        }
-    },
+      
     },
     watch: {
     }
