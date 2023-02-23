@@ -129,6 +129,17 @@ export default {
       console.log("update event received to root");
       setTimeout(this.getData(0), 3000); 
     });
+
+    bus.$on('SuccessfulDeleteFromDetail', () =>{
+      this.SuccessfulDelete();
+    });
+
+    bus.$on('UnsuccessfulDeleteFromDetail', () =>{
+      this.UnsuccessfulDelete();
+    });
+
+
+
   },
 
   computed: {
@@ -170,10 +181,6 @@ export default {
         console.log(error);
       }
     },
-
-
-    
-
 
     async getSearchQuery(pageNumber) {
       if (this.searchQuery === "") {
@@ -228,13 +235,13 @@ export default {
     },
 
 
-    SuccessfulDelete() {
+    SuccessfulDelete: function() {
       this.isSuccessfulDelete = true;
       this.showSystemMessage = true; 
       setTimeout(() => { this.showSystemMessage = false }, 4000);
     },
 
-    UnsuccessfulDelete() {
+    UnsuccessfulDelete: function() {
       this.isSuccessfulDelete = false;
       this.showSystemMessage = true; 
       setTimeout(() => { this.showSystemMessage = false }, 4000);

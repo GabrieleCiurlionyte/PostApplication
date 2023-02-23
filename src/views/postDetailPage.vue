@@ -1,14 +1,6 @@
 <template>
   <div id="page">
 
-
-   <!--is-danger for another class-->
-   <system-message class="is-success" v-if="showSystemMsg" :isSuccessful = "isDeleteSuccessful" :operationName = "deletion">
-     <template #header-slot><p>Success</p></template>
-     <template #button-slot><button class="delete" aria-label="delete" @click="showSystemMsg = false"></button></template>
-     <template #body-slot>{{ systemMsg }}</template>
-   </system-message>
-
    <modal-window v-if="showModal" @close="showModal = false"
      :editablePost="post"
      :isModalEdit="true"
@@ -57,6 +49,8 @@
  import {APICallsMixin} from "../common/Mixins/APICallsMixin";
  import { AuthorCallMixin } from "../common/Mixins/AuthorCallMixin";
  import { DeleteArticleCall } from "../common/Mixins/DeleteArticleCall";
+ import { bus } from "../main";
+
  export default {
    components: {
        "article-box":articleBox,
@@ -74,9 +68,6 @@
        authors : null,
        showModal : false,
        showConfirmation : false,
-       showSystemMsg : false,
-       isDeleteSuccessful : null,
-       
      }
    },
    mounted() {
@@ -93,6 +84,7 @@
      },
      confirmConfirmation(){
        this.deleteArticle(this.postID);
+       //Emit system message
        this.$router.push({path:'/'});
      },
      deleteArticle: async function (postID) {
@@ -100,15 +92,13 @@
              const response = await this.$http.delete(
                `http://localhost:3000/Articles/${postID}`
              );
-             this.showSystemMsg = true;
-             this.isDeleteSuccessful = true;
+             bus.$emit("SuccessfulDeleteFromDetail");
+
            } catch (error) {
              console.log(error);
-             this.showSystemMsg = false;
-             this.isDeleteSuccessful = false;
+             bus.$emit("UnsuccessfulDeleteFromDetail");
            }
-     
-         },
+      },
       async getData() {
             try {
                 const response = await this.$http.get(
