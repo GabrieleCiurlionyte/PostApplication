@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import mainDetailPage from "../modules/DetailPage/mainDetailPage.vue";
+import mainDetailPage from "../components/DetailPage/mainDetailPage.vue"
 import errorPage from "../views/404Page.vue";
 export default {
   components: {

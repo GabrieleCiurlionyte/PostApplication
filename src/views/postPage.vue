@@ -65,15 +65,15 @@
 
 <script>
 
-import paginationPage from "../modules/PostPage/paginationPage.vue";
+import paginationPage from "../components/Article/paginationPage.vue";
 import errorPage from "./404Page.vue";
-import paginationElement from "../modules/PostPage/paginationElement.vue";
-import searchBar from "../common/searchBar.vue";
-import pictureButton from "../common/pictureButton.vue";
-import modalWindow from "../common/modalWindow.vue";
-import dropDown from "../common/drop-down.vue";
-import systemMessage from "../common/systemMessage.vue";
-import { APICallsMixin } from "../common/Mixins/APICallsMixin";
+import paginationElement from "../components/Article/paginationElement.vue";
+import searchBar from "../components/searchBar.vue";
+import pictureButton from "../components/pictureButton.vue";
+import modalWindow from "../components/Messages/modalWindow.vue";
+import dropDown from "../components/drop-down.vue";
+import systemMessage from "../components/Messages/systemMessage.vue";
+import { APICallsMixin } from "../Mixins/APICallsMixin"
 import { bus } from "../main";
 
 export default {

@@ -54,7 +54,7 @@
 <script>
 
 
-import { bus } from "../main";
+import { bus } from "../../main";
 import systemMessage from "./systemMessage.vue";
 
 export default {

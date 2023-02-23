@@ -24,8 +24,8 @@
 <script>
 
 import ArticleBox from './articleBox.vue';
-import confirmationWindow from "../../common/confirmationWindow.vue";
-import { DeleteArticleCall } from '../../common/Mixins/DeleteArticleCall';
+import confirmationWindow from "../Messages/confirmationWindow.vue";
+import { APICallsMixin } from "../../Mixins/APICallsMixin";
 
 
 export default {
@@ -35,7 +35,7 @@ export default {
     "article-box": ArticleBox,
     "confirmation-window": confirmationWindow,
   },
-  mixins:[DeleteArticleCall],
+  mixins:[APICallsMixin],
   props: ['posts', 'authors'],
   data() {
     return {

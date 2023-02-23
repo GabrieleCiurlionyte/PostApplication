@@ -42,13 +42,12 @@
    </template>
    
    <script>
-   import articleBox from "../../modules/PostPage/articleBox.vue"
-   import confirmationWindow from "../../common/confirmationWindow.vue";
-   import modalWindow from "../../common/modalWindow.vue";
-   import systemMessage from "../../common/systemMessage.vue"
-   import {APICallsMixin} from "../../common/Mixins/APICallsMixin";
-   import { AuthorCallMixin } from "../../common/Mixins/AuthorCallMixin";
-   import { DeleteArticleCall } from "../../common/Mixins/DeleteArticleCall";
+   import articleBox from "../../components/Article/articleBox.vue"
+   import confirmationWindow from "../Messages/confirmationWindow.vue";
+   import modalWindow from "../Messages/modalWindow.vue";
+   import systemMessage from "../Messages/systemMessage.vue"
+   import {APICallsMixin} from "../../Mixins/APICallsMixin";
+   import { AuthorCallMixin } from "../../Mixins/AuthorCallMixin";
    import { bus } from "../../main";
   
    export default {
@@ -58,7 +57,7 @@
          "modal-window": modalWindow,
          "system-message" : systemMessage,
      },
-     mixins: [APICallsMixin, AuthorCallMixin, DeleteArticleCall],
+     mixins: [APICallsMixin, AuthorCallMixin],
      props: ['post'],
      data() {
        return {
