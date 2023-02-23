@@ -145,16 +145,15 @@ export default {
         //Send a put request for editablePost
         this.putRequest(this.editablePost.id);
         if(this.$router.currentRoute.path != '/') {
-          console.log("update event emiited from detail");
+          console.log("update event emiited from detail modal");
           bus.$emit('UpdateArticles');
           this.$router.push({path:'/'});
         }
         else {
-          console.log("update event emiited from root");
+          console.log("update event emited from root modal");
           bus.$emit('UpdateArticles');
           this.$emit("CloseModalWindow");
         }
-        
       }
       else {
         this.validatePost();
@@ -181,7 +180,6 @@ export default {
       }
     },
 
-    //TODO:
     putRequest : async function(postID){
       if(!this.hasError){
         let date = new Date().toString();

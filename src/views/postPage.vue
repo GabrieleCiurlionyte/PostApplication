@@ -130,7 +130,7 @@ export default {
   beforeUpdate(){
     bus.$on('UpdateArticles', () => {
       console.log("update event received to root");
-      setTimeout(this.getData(0), 3000); 
+      this.getData(0);
     });
 
     bus.$on('SuccessfulDeleteFromDetail', () =>{
