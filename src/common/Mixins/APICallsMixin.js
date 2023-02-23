@@ -6,8 +6,10 @@ export const APICallsMixin = {
                 `http://localhost:3000/Articles/${this.postID}`
                 );
                 this.post = response.data;
+                this.showErrorPage = false,
                 console.log(this.post);
             } catch (error) {
+                this.showErrorPage = true,
                 console.log(error);
             }
         },

@@ -1,6 +1,8 @@
 <template>
   <div id="Page">
 
+    <error-page v-if="showErrorPage"></error-page>
+    <template v-if="!showErrorPage">
     <system-message v-if="showSystemMessage" :isSuccessful="isSuccessfulDelete">
       <template #button-slot><button class="delete" aria-label="delete" @click="showSystemMessage = false"></button></template>
     </system-message>
@@ -57,14 +59,14 @@
         @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
         :last_page="last_page"></pagination-element>
     </template>
-
-
+  </template>
   </div>
 </template>
 
 <script>
 
 import paginationPage from "../modules/PostPage/paginationPage.vue";
+import errorPage from "./404Page.vue";
 import paginationElement from "../modules/PostPage/paginationElement.vue";
 import searchBar from "../common/searchBar.vue";
 import pictureButton from "../common/pictureButton.vue";
@@ -84,6 +86,7 @@ export default {
     'modal-window': modalWindow,
     'drop-down' : dropDown,
     'system-message' : systemMessage,
+    'error-page' : errorPage,
   },
 
   mixins:[APICallsMixin],
@@ -112,6 +115,7 @@ export default {
       showSystemMessage : false,
       isSuccessfulDelete : false,
 
+      showErrorPage : false,
     };
   },
 
