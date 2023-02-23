@@ -2,12 +2,14 @@ import Vue from 'vue';
 import App from './App.vue';
 import axios from 'axios';
 import VueRouter from 'vue-router';
-import Routes from './routes.js';
+import Routes from "./router/routes.js"
 import vueDebounce from 'vue-debounce'
+import apiRequestPlugin from './plugins/apiRequestPlugin';
 
 export const bus = new Vue();
 
 Vue.use(vueDebounce);
+Vue.use(apiRequestPlugin);
 
 Vue.use(VueRouter);
 const router = new VueRouter({

@@ -98,10 +98,10 @@ export default {
     return {
 
       posts: [],
-      postsCount : 0,
       authors: [],
       POSTS_PER_PAGE: 4,
       current_page: 1,
+      last_page: 1,
 
       editableArticle: null,
       //Modal window properties
@@ -123,18 +123,17 @@ export default {
 
   },
 
-  created() {
-    this.getDataCount();
+  async created() {
+    this.last_page = await this.$requestPlugin.getPageCount();
     this.searchMode = false;
-    this.getData(0);
-    this.getAuthors();
-
+    this.posts = await this.$requestPlugin.getPageData(0);
+    this.authors = await this.$requestPlugin.getAuthors();
   },
 
   beforeUpdate(){
-    bus.$on('UpdateArticles', () => {
+    bus.$on('UpdateArticles', async () => {
       console.log("update event received to root");
-      this.getData(0);
+      this.posts = await this.$requestPlugin.getPageData(0);
     });
 
     bus.$on('SuccessfulDeleteFromDetail', () =>{
@@ -145,8 +144,8 @@ export default {
       this.UnsuccessfulDelete();
     });
 
-    bus.$on('UpdateArticlesForDetailPage', () =>{
-      this.getData(0);
+    bus.$on('UpdateArticlesForDetailPage', async () =>{
+      this.posts = await this.$requestPlugin.getPageData(0);
     });
   },
 
@@ -156,13 +155,6 @@ export default {
       return (this.posts.length > 0 ? true : false);
     },
 
-    last_page(){
-      this.getDataCount();
-      var quotient = Math.floor(this.postsCount/this.POSTS_PER_PAGE);
-      var remainder = this.postsCount % this.POSTS_PER_PAGE;
-      console.log((remainder == 0 ? quotient : quotient + 1));
-      return (remainder == 0 ? quotient : quotient + 1);
-    },
   },
 
   methods: {
@@ -179,16 +171,7 @@ export default {
       this.IsModalEdit = true;
       this.showModal = true;
     },
-    async getDataCount(){
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles`
-        );
-        this.postsCount = response.data.length;
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    
 
     async getSearchQuery(pageNumber) {
       if (this.searchQuery === "") {
@@ -211,9 +194,9 @@ export default {
     },
 
 
-    ExecuteAPICall() {
+    async asyncExecuteAPICall() {
       if (!(this.searchMode)) {
-        this.getData(this.current_page);
+        this.posts = await this.$requestPlugin.getPageData(this.current_page);
       }
       else {
         this.getSearchQuery(this.current_page, this.searchQuery);

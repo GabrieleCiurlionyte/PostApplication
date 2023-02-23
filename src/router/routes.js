@@ -1,6 +1,6 @@
-import postPage from './views/postPage.vue';
-import postDetailPage from './views/postDetailPage.vue';
-import errorPage from './views/404Page.vue';
+import postPage from '../views/postPage.vue';
+import postDetailPage from '../views/postDetailPage.vue';
+import errorPage from "../views/404Page.vue";
 
 
 export default [
