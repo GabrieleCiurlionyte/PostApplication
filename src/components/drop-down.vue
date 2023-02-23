@@ -65,8 +65,6 @@ export default {
                 return { 'is-active' : isSelected}
             }
         }
-
-
     },
     watch: {
     }

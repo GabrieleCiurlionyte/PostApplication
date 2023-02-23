@@ -21,10 +21,6 @@
       return {
       }
     },
-    mounted() {
-    },
-    created() {
-    },
     computed: {
       messageHeader() {
         return (this.isSuccessful ? "Success" : "Error");
@@ -33,10 +29,6 @@
         return ( this.isSuccessful ? "Sucessful deletion" : "Unsuccessful deletion");
       }
     },
-    methods: {
-    },
-    watch: {
-    }
   }
   </script>
   

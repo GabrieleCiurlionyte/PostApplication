@@ -78,19 +78,19 @@
          this.showConfirmation = false;
        },
        confirmConfirmation(){
-         this.deleteArticle(this.postID);
+         this.deleteArticle(this.post.id);
          //Issue a get request to update the articles
          bus.$emit("UpdateArticlesForDetailPage");
          this.$router.push({path:'/'});
        },
        deleteArticle: async function (postID) {
              try {
-               const response = await this.$http.delete(
-                 `http://localhost:3000/Articles/${postID}`
-               );
+               await this.$requestPlugin.deletePost(postID);
+               console.log(`Deleted post ${postiD}`);
                bus.$emit("SuccessfulDeleteFromDetail");
              } catch (error) {
                console.log(error);
+               console.log(`Unsuccessful delete: post ${postiD}`);
                bus.$emit("UnsuccessfulDeleteFromDetail");
              }
         },

@@ -82,12 +82,6 @@ export default {
     }
   },
 
-  computed: {
-
-
-
-  },
-
   created() {
     if (this.isModalEdit) {
       this.title = this.editablePost.title;
@@ -131,8 +125,6 @@ export default {
         this.hasError = false;
       }
     },
-
-
   },
 
   methods: {
@@ -164,41 +156,21 @@ export default {
         this.errorMsg = "There are empty fields!";
       }
       if (!this.hasError) {
-        let date = new Date().toString();
-        //Sending a post request:
-        this.$http.post('http://localhost:3000/Articles', {
-          title: this.title,
-          body: this.content,
-          author: this.author.id,
-          created_at: date,
-          updated_at: date
-        })
-          .catch(error => {
-            console.log(error)
-          });
-
+        await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
+          console.log(error)
+        });
       }
     },
-
     putRequest: async function (postID) {
       if (!this.hasError) {
         let date = new Date().toString();
-        this.$http.put(`http://localhost:3000/Articles/${postID}`, {
-          title: this.title,
-          body: this.content,
-          author: this.editablePost.author,
-          created_at: this.editablePost.created_at,
-          updated_at: this.editablePost.updated_at,
-        })
-          .catch(error => { console.log(error) });
+        await this.$requestPlugin.putArticle(postID, this.title, this.content, this.editablePost).catch(error => {
+          console.log(error)
+        });
       }
     }
-
-
   },
-
 }
-
 </script>
 
 <style scoped>

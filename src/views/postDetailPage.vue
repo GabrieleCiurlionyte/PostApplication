@@ -31,10 +31,7 @@ export default {
   methods: {
     async getData() {
       try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles/${this.postID}`
-        );
-        this.post = response.data;
+        this.post = await this.$requestPlugin.getPostData(this.postID);
         this.showError = false;
       } catch (error) {
         console.log(error);

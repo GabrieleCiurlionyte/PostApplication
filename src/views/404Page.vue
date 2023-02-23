@@ -17,7 +17,7 @@
 export default {
   components: {
   },
-  props: ['post'],
+  props: [],
   data() {
     return {
     }
