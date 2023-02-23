@@ -25,7 +25,6 @@
 
 import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../Messages/confirmationWindow.vue";
-import { APICallsMixin } from "../../Mixins/APICallsMixin";
 
 
 export default {
@@ -35,7 +34,6 @@ export default {
     "article-box": ArticleBox,
     "confirmation-window": confirmationWindow,
   },
-  mixins:[APICallsMixin],
   props: ['posts', 'authors'],
   data() {
     return {
@@ -47,11 +45,7 @@ export default {
   computed: {
 
   },
-
-  
-
   methods: {
-
     cancelConfirmation(){
       this.showConfirmation = false;
     },
@@ -59,9 +53,7 @@ export default {
     async confirmConfirmation(){
       //TODO: Emit an event to post page that deletion was successful or not
       try {
-              const response = await this.$http.delete(
-                `http://localhost:3000/Articles/${this.currentDeletionPost.id}`
-              );
+              await this.$requestPlugin.deletePost(this.currentDeletionPost.id);
               this.$emit('successfulDelete');
             } catch (error) {
               console.log(error);

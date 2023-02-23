@@ -73,7 +73,6 @@ import pictureButton from "../components/pictureButton.vue";
 import modalWindow from "../components/Messages/modalWindow.vue";
 import dropDown from "../components/drop-down.vue";
 import systemMessage from "../components/Messages/systemMessage.vue";
-import { APICallsMixin } from "../Mixins/APICallsMixin"
 import { bus } from "../main";
 
 export default {
@@ -88,9 +87,6 @@ export default {
     'system-message' : systemMessage,
     'error-page' : errorPage,
   },
-
-  mixins:[APICallsMixin],
-
   props: [
   ],
 
@@ -226,8 +222,8 @@ export default {
     },
 
 
-    SuccessfulDelete: function() {
-      this.getData(0);
+    SuccessfulDelete: async function() {
+      this.posts = await this.$requestPlugin.getPageData(0);
       this.isSuccessfulDelete = true;
       this.showSystemMessage = true; 
       setTimeout(() => { this.showSystemMessage = false }, 4000);
