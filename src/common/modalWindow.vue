@@ -1,5 +1,4 @@
 <template>
-
   <div class="modal-mask">
     <div class="modal-wrapper">
       <div class="modal-container">
@@ -8,8 +7,7 @@
           <template #header-slot>
             <p>Incorrect input</p>
           </template>
-          <template #button-slot><button class="delete" aria-label="delete"
-              @click="hasError = false"></button></template>
+          <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
           <template #body-slot>{{ errorMsg }}</template>
         </system-message>
 
@@ -30,28 +28,27 @@
         </div>
 
         <div class="modal-body">
-          
-
-            <label for="fTitle">Title:</label>
-            <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1"
-              placeholder="Enter your title..." required>
-
-            <slot name="author-slot">
-            </slot>
 
 
-            <label for="fContent">Article Content:</label>
-            <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..."
-              rows="5" minlength="1" required></textarea>
+          <label for="fTitle">Title:</label>
+          <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1"
+            placeholder="Enter your title..." required>
 
-            <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
+          <slot name="author-slot">
+          </slot>
 
-          
+
+          <label for="fContent">Article Content:</label>
+          <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..."
+            rows="5" minlength="1" required></textarea>
+
+          <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
+
+
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -144,10 +141,10 @@ export default {
       if (this.isModalEdit) {
         //Send a put request for editablePost
         this.putRequest(this.editablePost.id);
-        if(this.$router.currentRoute.path != '/') {
+        if (this.$router.currentRoute.path != '/') {
           console.log("update event emiited from detail modal");
           bus.$emit('UpdateArticles');
-          this.$router.push({path:'/'});
+          this.$router.push({ path: '/' });
         }
         else {
           console.log("update event emited from root modal");
@@ -169,28 +166,31 @@ export default {
       if (!this.hasError) {
         let date = new Date().toString();
         //Sending a post request:
-        this.$http.post('http://localhost:3000/Articles', { 
+        this.$http.post('http://localhost:3000/Articles', {
           title: this.title,
           body: this.content,
           author: this.author.id,
           created_at: date,
           updated_at: date
         })
-        .catch(error => {console.log(error)});
+          .catch(error => {
+            console.log(error)
+          });
+
       }
     },
 
-    putRequest : async function(postID){
-      if(!this.hasError){
+    putRequest: async function (postID) {
+      if (!this.hasError) {
         let date = new Date().toString();
-        this.$http.put(`http://localhost:3000/Articles/${postID}`, { 
+        this.$http.put(`http://localhost:3000/Articles/${postID}`, {
           title: this.title,
           body: this.content,
           author: this.editablePost.author,
           created_at: this.editablePost.created_at,
           updated_at: this.editablePost.updated_at,
         })
-        .catch(error => {console.log(error)});
+          .catch(error => { console.log(error) });
       }
     }
 

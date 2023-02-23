@@ -12,13 +12,12 @@
 
                 <template v-if="current_page > 1">
                     <li v-if="current_page > 2">
-                        <span class="pagination-ellipsis">&hellip;</span>
+                        <span class="pagination-ellipsis" v-if="!(last_page < 4)">&hellip;</span>
                     </li>
                     <li>
-                        <a class="pagination-link">{{ current_page - 1}}</a>
+                        <a class="pagination-link" @click="GoToPreviousPage">{{ current_page - 1}}</a>
                     </li>
                 </template>
-
 
                 <li>
                     <a class="pagination-link is-current" :aria-label="current_page" aria-current="page">{{
@@ -27,12 +26,12 @@
                 </li>
 
                 <li v-if="current_page + 1 == last_page">
-                    <a class="pagination-link">{{ current_page + 1 }}</a>
+                    <a class="pagination-link" @click="GoToNextPage">{{ current_page + 1 }}</a>
                 </li>
 
 
                 <template v-if="current_page < last_page - 1">
-                    <li>
+                    <li v-if="!(last_page < 3)">
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
                     <li>

@@ -62,7 +62,6 @@
      props: ['post'],
      data() {
        return {
-         postID : this.$route.params.id,
          authors : null,
          showModal : false,
          showConfirmation : false,
@@ -96,17 +95,7 @@
                bus.$emit("UnsuccessfulDeleteFromDetail");
              }
         },
-        async getData() {
-              try {
-                  const response = await this.$http.get(
-                  `http://localhost:3000/Articles/${this.postID}`
-                  );
-                  this.post = response.data;
-                  console.log(this.post);
-              } catch (error) {
-                  console.log(error);
-              }
-          },
+        
      },
      watch: {
      }
