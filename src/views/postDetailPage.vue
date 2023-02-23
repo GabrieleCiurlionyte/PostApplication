@@ -84,7 +84,8 @@
      },
      confirmConfirmation(){
        this.deleteArticle(this.postID);
-       //Emit system message
+       //Issue a get request to update the articles
+       bus.$emit("UpdateArticlesForDetailPage");
        this.$router.push({path:'/'});
      },
      deleteArticle: async function (postID) {
@@ -93,7 +94,6 @@
                `http://localhost:3000/Articles/${postID}`
              );
              bus.$emit("SuccessfulDeleteFromDetail");
-
            } catch (error) {
              console.log(error);
              bus.$emit("UnsuccessfulDeleteFromDetail");

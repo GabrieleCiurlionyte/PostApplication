@@ -125,6 +125,9 @@ export default {
     this.getData(0);
     this.getAuthors();
 
+  },
+
+  beforeUpdate(){
     bus.$on('UpdateArticles', () => {
       console.log("update event received to root");
       setTimeout(this.getData(0), 3000); 
@@ -138,8 +141,9 @@ export default {
       this.UnsuccessfulDelete();
     });
 
-
-
+    bus.$on('UpdateArticlesForDetailPage', () =>{
+      this.getData(0);
+    });
   },
 
   computed: {
@@ -236,6 +240,7 @@ export default {
 
 
     SuccessfulDelete: function() {
+      this.getData(0);
       this.isSuccessfulDelete = true;
       this.showSystemMessage = true; 
       setTimeout(() => { this.showSystemMessage = false }, 4000);

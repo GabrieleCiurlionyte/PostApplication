@@ -1,5 +1,7 @@
 <template>
-    
+    <div id="page">
+      
+    </div>
 </template>
 
 <script>
@@ -12,16 +14,12 @@ export default {
     return {
     }
   },
-  mounted() {
-  },
   created() {
   },
   computed: {
   },
   methods: {
   },
-  watch: {
-  }
 }
 </script>
 
