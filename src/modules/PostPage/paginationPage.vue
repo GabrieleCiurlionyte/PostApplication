@@ -56,10 +56,20 @@ export default {
       this.showConfirmation = false;
     },
 
-    confirmConfirmation(){
-      this.deleteArticle(this.currentDeletionPost.id);
+    async confirmConfirmation(){
+      //TODO: Emit an event to post page that deletion was successful or not
+      try {
+              const response = await this.$http.delete(
+                `http://localhost:3000/Articles/${this.currentDeletionPost.id}`
+              );
+              this.$emit('successfulDelete');
+            } catch (error) {
+              console.log(error);
+              this.$emit('unsuccessfulDelete');
+      }
       this.showConfirmation = false;
     },
+
 
     showConfirmationBox(post) {
       this.showConfirmation = true;

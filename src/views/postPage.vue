@@ -1,17 +1,8 @@
 <template>
   <div id="Page">
 
-    
-    <system-message class="is-danger" v-if="hasError">
-      <template #header-slot><p>Error</p></template>
-      <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
-      <template #body-slot>{{ errorMsg }}</template>
-    </system-message>
-
-    <system-message class="is-success" v-if="isSuccessful">
-      <template #header-slot><p>Success</p></template>
-      <template #button-slot><button class="delete" aria-label="delete" @click="isSuccessful = false"></button></template>
-      <template #body-slot>{{ successMsg }}</template>
+    <system-message v-if="showSystemMessage" :isSuccessful="isSuccessfulDelete">
+      <template #button-slot><button class="delete" aria-label="delete" @click="showSystemMessage = false"></button></template>
     </system-message>
 
     <h1 class="title is-1">Post page</h1>
@@ -27,7 +18,7 @@
     </search-bar>
 
 
-    <button class="button is-primary" @click="CreateArticle">
+    <button class="button is-primary" @click="CreateArticle()" >
       <span class="icon">
         <i class="fa-solid fa-plus"></i>
       </span>
@@ -60,7 +51,7 @@
     <h2 class="subtitle is-2"></h2>
     <template v-if="hasPosts">
       <pagination-page :posts="posts" :authors="authors" @rerenderArticles=getData(0)
-        @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"
+        @unsuccessfulDelete="UnsuccessfulDelete()" @successfulDelete="SuccessfulDelete()"
         @EditArticle="EditArticle($event)"></pagination-page>
       <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
         @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
@@ -118,11 +109,8 @@ export default {
       searchMode: false,
       searchQuery: "",
 
-      hasError: false,
-      errorMsg: "",
-
-      isSuccessful: false,
-      successMsg: "",
+      showSystemMessage : false,
+      isSuccessfulDelete : false,
 
     };
   },
@@ -162,8 +150,7 @@ export default {
 
     CreateArticle: function() {
       this.modalHeader = "Add article";
-      this.isModalEdit = false;
-      console.log("create article");
+      this.IsModalEdit = false;
       this.showModal = true;
     },
 
@@ -240,21 +227,17 @@ export default {
       this.ExecuteAPICall();
     },
 
-    DisplayError(msg) {
-      this.hasError = true;
-      this.errorMsg = msg;
-      setTimeout(() => { this.hasError = false }, 4000);
+
+    SuccessfulDelete() {
+      this.isSuccessfulDelete = true;
+      this.showSystemMessage = true; 
+      setTimeout(() => { this.showSystemMessage = false }, 4000);
     },
 
-    DisplaySuccess(msg) {
-      this.isSuccessful = true;
-      this.successMsg = msg;
-      setTimeout(() => { this.isSuccessful = false }, 4000);
-    },
-
-    SuccessfulDelete(msg) {
-      this.getData(0);
-      this.DisplaySuccess(msg);
+    UnsuccessfulDelete() {
+      this.isSuccessfulDelete = false;
+      this.showSystemMessage = true; 
+      setTimeout(() => { this.showSystemMessage = false }, 4000);
     }
 
   },
