@@ -23,5 +23,17 @@ export const APICallsMixin = {
               console.log(error);
             }
           },
+
+          async getData(pageNumber) {
+            try {
+              const response = await this.$http.get(
+                `http://localhost:3000/Articles?_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
+              );
+              this.posts = response.data;
+              console.log(this.posts);
+            } catch (error) {
+              console.log(error);
+            }
+          },
     }
 }

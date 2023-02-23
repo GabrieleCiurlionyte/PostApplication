@@ -16,7 +16,7 @@
   export default {
     components: {
     },
-    props: ['isSuccessful', 'operationName'],
+    props: ['isSuccessful'],
     data() {
       return {
       }

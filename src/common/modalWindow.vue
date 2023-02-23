@@ -142,15 +142,23 @@ export default {
 
     takeAction: function () {
       if (this.isModalEdit) {
-        //Send a patch request for editablePost
-        console.log("Patch request");
-        this.patchRequest();
-
+        //Send a put request for editablePost
+        this.putRequest(this.editablePost.id);
+        if(this.$router.currentRoute.path != '/') {
+          console.log("update event emiited from detail");
+          bus.$emit('UpdateArticles');
+          this.$router.push({path:'/'});
+        }
+        else {
+          console.log("update event emiited from root");
+          bus.$emit('UpdateArticles');
+          this.$emit("CloseModalWindow");
+        }
+        
       }
       else {
-        //Send a post request
         this.validatePost();
-        
+        //TODO: update after creation
       }
     },
 
@@ -174,10 +182,15 @@ export default {
     },
 
     //TODO:
-    patchRequest : async function(){
+    putRequest : async function(postID){
       if(!this.hasError){
-        this.$http.patchRequest('http://localhost:3000/Articles', { 
-          
+        let date = new Date().toString();
+        this.$http.put(`http://localhost:3000/Articles/${postID}`, { 
+          title: this.title,
+          body: this.content,
+          author: this.editablePost.author,
+          created_at: this.editablePost.created_at,
+          updated_at: this.editablePost.updated_at,
         })
         .catch(error => {console.log(error)});
       }

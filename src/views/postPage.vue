@@ -37,7 +37,9 @@
 
     <modal-window v-if="showModal" @close="showModal = false" :posts="posts"
       :editablePost="editableArticle"
-      :isModalEdit="IsModalEdit">
+      :isModalEdit="IsModalEdit"
+      @UpdateArticles="getData(0);"
+      @CloseModalWindow="showModal = false">
       <template #header id="modal-header">
         {{ modalHeader }}
       </template>
@@ -79,7 +81,7 @@ import modalWindow from "../common/modalWindow.vue";
 import dropDown from "../common/drop-down.vue";
 import systemMessage from "../common/systemMessage.vue";
 import { APICallsMixin } from "../common/Mixins/APICallsMixin";
-
+import { bus } from "../main";
 
 export default {
 
@@ -134,6 +136,11 @@ export default {
     this.searchMode = false;
     this.getData(0);
     this.getAuthors();
+
+    bus.$on('UpdateArticles', () => {
+      console.log("update event received to root");
+      setTimeout(this.getData(0), 3000); 
+    });
   },
 
   computed: {
@@ -178,17 +185,7 @@ export default {
     },
 
 
-    async getData(pageNumber) {
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles?_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
-        );
-        this.posts = response.data;
-        console.log(this.posts);
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    
 
 
     async getSearchQuery(pageNumber) {
