@@ -13,7 +13,6 @@ export const store = new Vuex.Store({
         //possible array: delete, edit, create
     },
     mutations: {
-
         changeSystemMessageShow(state, boolean) {
             state.showSystemMessage = boolean;
         },
@@ -27,12 +26,9 @@ export const store = new Vuex.Store({
             else {
                 console.log("Invalid message mode selected");
             }
-        }
-        
+        } 
     },
-
 })
-
 
 function checkValidMode(string) {
     return (string == "delete" || 

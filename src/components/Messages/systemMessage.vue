@@ -1,6 +1,6 @@
 
   <template>
-    <article class="message validation-msg" :class="{'is-danger':!isSystemMessageSuccessful, 'is-success': isSystemMessageSuccessful}">
+    <article class="message validation-msg" :class="{'is-danger':!this.isSystemMessageSuccessful, 'is-success': this.isSystemMessageSuccessful}">
         <div class="message-header">
           <p>{{ messageHeader }}</p>
           <slot name="button-slot"></slot>
@@ -16,28 +16,18 @@
   export default {
     components: {
     },
-    props: ['isSuccessful'],
     data() {
       return {
       }
     },
     computed: {
       messageHeader() {
-        return (this.isSuccessful ? "Success" : "Error");
+        return (this.isSystemMessageSuccessful ? "Success" : "Error");
       },
       messageBody(){
-        console.log(systemMessageMode);
-        return systemMessageMode;
+        return this.systemMessageMode + this.messageHeader;
       }
     },
-  }
-
-  function returnSuccessString() {
-    
-  }
-
-  function returnMessageHeader() {
-
   }
 
   </script>
