@@ -57,10 +57,9 @@
          "system-message" : systemMessage,
      },
      mixins: [AuthorCallMixin],
-     props: ['post'],
+     props: ['post', 'authors'],
      data() {
        return {
-         authors : null,
          showModal : false,
          showConfirmation : false,
        }
@@ -68,7 +67,6 @@
      mounted() {
      },
      created() {
-         this.getAuthors();
      },
      computed: {
      },

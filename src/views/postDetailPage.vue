@@ -1,7 +1,7 @@
 <template>
   <div id="page">
     <error-page v-if="showError"></error-page>
-    <main-detail-page v-if="!showError" :post="post"></main-detail-page>
+    <main-detail-page v-if="!showError" :post="post" :authors = "authors"></main-detail-page>
   </div>
 </template>
 
@@ -21,9 +21,11 @@ export default {
       postID : this.$route.params.id,
       post :null,
       showError : false,
+      authors : null,
     }
   },
-  created() {
+  async created() {
+    this.authors = await this.$requestPlugin.getAuthors();
     this.getData();
   },
   computed: {
