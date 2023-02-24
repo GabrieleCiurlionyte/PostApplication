@@ -1,27 +1,36 @@
 <template>
   <div>
+    <system-message v-if="showSystemMessage"></system-message>
     <router-view></router-view>
   </div>
   
 </template>
 
 <script>
-import postPage from './views/postPage.vue';
-import notFoundPage from './views/404Page.vue';
-import postDetailPage from './views/postDetailPage.vue';
+
+import { mapMutations, mapState } from 'vuex';
+import systemMessage from './components/Messages/systemMessage.vue';
 
 export default {
   name: 'app',
   components:{
-    "post-page": postPage,
-    "not-found-page" : notFoundPage,
-    "post-detail-page" : postDetailPage,
+    'system-message': systemMessage,
   },
   data () {
     return {
       
     }
-  }
+  },
+  computed: mapState([
+    'showSystemMessage',
+    'isSystemMessageSuccessful',
+    'systemMessageMode',
+  ]),
+  methods: mapMutations([
+    'changeSystemMessageShow',
+    'changeSystemMessageSuccessState',
+    'changeSystemMessageMode',
+  ]),
 }
 </script>
 

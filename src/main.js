@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 import Routes from "./router/routes.js"
 import vueDebounce from 'vue-debounce'
 import apiRequestPlugin from './plugins/apiRequestPlugin';
+import { store } from './stores/systemMessageStore'
 
 export const bus = new Vue();
 
@@ -21,6 +22,7 @@ Vue.prototype.$http = axios;
 
 new Vue({
   el: '#app',
+  store,
   render: h => h(App),
   router: router,
 })

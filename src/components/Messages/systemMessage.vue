@@ -1,6 +1,6 @@
 
   <template>
-    <article class="message validation-msg" :class="{'is-danger':!isSuccessful, 'is-success': isSuccessful}">
+    <article class="message validation-msg" :class="{'is-danger':!isSystemMessageSuccessful, 'is-success': isSystemMessageSuccessful}">
         <div class="message-header">
           <p>{{ messageHeader }}</p>
           <slot name="button-slot"></slot>
@@ -26,10 +26,20 @@
         return (this.isSuccessful ? "Success" : "Error");
       },
       messageBody(){
-        return ( this.isSuccessful ? "Sucessful deletion" : "Unsuccessful deletion");
+        console.log(systemMessageMode);
+        return systemMessageMode;
       }
     },
   }
+
+  function returnSuccessString() {
+    
+  }
+
+  function returnMessageHeader() {
+
+  }
+
   </script>
   
   <style scoped>
