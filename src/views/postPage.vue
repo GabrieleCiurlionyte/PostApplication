@@ -3,9 +3,6 @@
 
     <error-page v-if="showErrorPage"></error-page>
     <template v-if="!showErrorPage">
-    <system-message v-if="showSystemMessage" :isSuccessful="isSuccessfulDelete">
-      <template #button-slot><button class="delete" aria-label="delete" @click="showSystemMessage = false"></button></template>
-    </system-message>
 
     <h1 class="title is-1">Post page</h1>
 
@@ -74,6 +71,8 @@ import modalWindow from "../components/Messages/modalWindow.vue";
 import dropDown from "../components/drop-down.vue";
 import systemMessage from "../components/Messages/systemMessage.vue";
 import { bus } from "../main";
+import { mapState, mapMutations } from "vuex";
+import { store } from "../stores/systemMessageStore";
 
 export default {
 
@@ -107,9 +106,6 @@ export default {
          
       searchMode: false,
       searchQuery: "",
-
-      showSystemMessage : false,
-      isSuccessfulDelete : false,
 
       showErrorPage : false,
     };
@@ -150,6 +146,10 @@ export default {
     hasPosts() {
       return (this.posts.length > 0 ? true : false);
     },
+
+    showSystemMessage() {
+      return store.state.showSystemMessage;
+    }
 
   },
 
@@ -221,18 +221,25 @@ export default {
       this.ExecuteAPICall();
     },
 
+    methods: mapMutations([
+    'changeSystemMessageShow',
+    'changeSystemMessageSuccessState',
+    'changeSystemMessageMode',
+  ]),
 
     SuccessfulDelete: async function() {
       this.posts = await this.$requestPlugin.getPageData(0);
-      this.isSuccessfulDelete = true;
-      this.showSystemMessage = true; 
-      setTimeout(() => { this.showSystemMessage = false }, 4000);
+      this.$store.commit('changeSystemMessageSuccessState', false);
+      this.$store.commit('changeSystemMessageMode', "delete");
+      this.$store.commit('changeSystemMessageShow', true);
+      setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
     },
 
     UnsuccessfulDelete: function() {
-      this.isSuccessfulDelete = false;
-      this.showSystemMessage = true; 
-      setTimeout(() => { this.showSystemMessage = false }, 4000);
+      this.$store.commit('changeSystemMessageSuccessState', false);
+      this.$store.commit('changeSystemMessageMode', "delete");
+      this.$store.commit('changeSystemMessageShow', true);
+      setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
     }
 
   },

@@ -157,8 +157,15 @@ export default {
       }
       if (!this.hasError) {
         await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
-          console.log(error)
+          this.$store.commit('changeSystemMessageSuccessState', false);
+          this.$store.commit('changeSystemMessageMode', "create");
+          this.$store.commit('changeSystemMessageShow', true);
+          setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
         });
+        this.$store.commit('changeSystemMessageSuccessState', true);
+        this.$store.commit('changeSystemMessageMode', "create");
+        this.$store.commit('changeSystemMessageShow', true);
+        setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
       }
     },
     putRequest: async function (postID) {
