@@ -1,6 +1,8 @@
 <template>
   <div>
-    <system-message v-if="showSystemMessage"></system-message>
+    <system-message>
+      <template #button-slot><button class="delete" aria-label="delete" @click="changeSystemMessageShow(false)"></button></template>
+    </system-message>
     <router-view></router-view>
   </div>
   
@@ -8,7 +10,7 @@
 
 <script>
 
-import { mapMutations, mapState } from 'vuex';
+
 import systemMessage from './components/Messages/systemMessage.vue';
 
 export default {
@@ -21,16 +23,12 @@ export default {
       
     }
   },
-  computed: mapState([
-    'showSystemMessage',
-    'isSystemMessageSuccessful',
-    'systemMessageMode',
-  ]),
-  methods: mapMutations([
-    'changeSystemMessageShow',
-    'changeSystemMessageSuccessState',
-    'changeSystemMessageMode',
-  ]),
+  methods: {
+    changeSystemMessageShow(value) {
+      this.$store.commit('changeSystemMessageShow', value);
+    }
+  }
+  
 }
 </script>
 

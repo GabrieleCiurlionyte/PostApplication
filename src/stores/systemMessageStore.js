@@ -13,8 +13,9 @@ export const store = new Vuex.Store({
         //possible array: delete, edit, create
     },
     mutations: {
-        changeSystemMessageShow(state, boolean) {
-            state.showSystemMessage = boolean;
+        changeSystemMessageShow(state, value) {
+            state.showSystemMessage = value;
+            console.log("statechanged" + state.showSystemMessage);
         },
         changeSystemMessageSuccessState(state, boolean) {
             state.selectSystemMessageMode = boolean;
