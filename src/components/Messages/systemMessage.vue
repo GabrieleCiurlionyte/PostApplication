@@ -22,9 +22,6 @@ export default {
     return {
     }
   },
-  computed: {
-
-  },
   computed: mapState([
     'showSystemMessage',
     'isSystemMessageSuccessful',

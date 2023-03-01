@@ -5,10 +5,8 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state: {
-        showSystemMessage : true,
+        showSystemMessage : false,
         isSystemMessageSuccessful : true,
-
-        //TODO: implement
         systemMessageMode : "delete",
         //possible array: delete, edit, create
     },

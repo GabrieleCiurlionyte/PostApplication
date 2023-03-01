@@ -8,14 +8,12 @@
 <script>
 import mainDetailPage from "../components/DetailPage/mainDetailPage.vue"
 import errorPage from "../views/404Page.vue";
+
 export default {
   components: {
     'main-detail-page': mainDetailPage,
     'error-page' : errorPage,
   },
-  props: [
-
-  ],
   data() {
     return {
       postID : this.$route.params.id,

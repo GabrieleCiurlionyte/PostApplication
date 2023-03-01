@@ -47,6 +47,7 @@
    import modalWindow from "../Messages/modalWindow.vue";
    import systemMessage from "../Messages/systemMessage.vue"
    import { AuthorCallMixin } from "../../Mixins/AuthorCallMixin";
+   import systemMessageMixin from "../../Mixins/systemMessageMixin";
    import { bus } from "../../main";
   
    export default {
@@ -56,7 +57,7 @@
          "modal-window": modalWindow,
          "system-message" : systemMessage,
      },
-     mixins: [AuthorCallMixin],
+     mixins: [AuthorCallMixin, systemMessageMixin],
      props: ['post', 'authors'],
      data() {
        return {
@@ -89,7 +90,9 @@
                console.log(error);
                console.log(`Unsuccessful delete: post ${postiD}`);
                bus.$emit("UnsuccessfulDeleteFromDetail");
+               this.showSystemMessage(false, "edit");
              }
+             this.showSystemMessage(true, "edit");
         },
         
      },

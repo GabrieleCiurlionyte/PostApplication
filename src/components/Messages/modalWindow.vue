@@ -56,6 +56,7 @@
 
 import { bus } from "../../main";
 import systemMessage from "./systemMessage.vue";
+import systemMessageMixin from "../../Mixins/systemMessageMixin";
 
 export default {
 
@@ -64,6 +65,7 @@ export default {
     'system-message': systemMessage,
   },
   props: ['posts', 'editablePost', 'isModalEdit'],
+  mixins : [systemMessageMixin],
 
   updated() {
     bus.$on('AuthorSelected', (data) => {
@@ -157,25 +159,20 @@ export default {
       }
       if (!this.hasError) {
         await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
-          this.$store.commit('changeSystemMessageSuccessState', false);
-          this.$store.commit('changeSystemMessageMode', "create");
-          this.$store.commit('changeSystemMessageShow', true);
-          setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
+          this.showSystemMessage(false,"create");
         });
-        this.$store.commit('changeSystemMessageSuccessState', true);
-        this.$store.commit('changeSystemMessageMode', "create");
-        this.$store.commit('changeSystemMessageShow', true);
-        setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
+        this.showSystemMessage(true, "create");
       }
     },
     putRequest: async function (postID) {
       if (!this.hasError) {
         let date = new Date().toString();
         await this.$requestPlugin.putArticle(postID, this.title, this.content, this.editablePost).catch(error => {
-          console.log(error)
+          this.showSystemMessage(false, "edit");
         });
+        this.showSystemMessage(true, "edit");
       }
-    }
+    },
   },
 }
 </script>
