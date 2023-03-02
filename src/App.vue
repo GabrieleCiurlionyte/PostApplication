@@ -6,14 +6,12 @@
     </system-message>
     <modal-window v-if="showModal">
       
-    </modal-window>
-    
+    </modal-window>  
     <router-view></router-view>
   </div>
 </template>
-
 <script>
-
+          
 
 import { mapState } from 'vuex';
 import systemMessage from './components/Messages/systemMessage.vue';

@@ -76,7 +76,13 @@
          this.showConfirmation = false;
        },
        confirmConfirmation(){
-         this.deleteArticle(this.post.id);
+        try{
+          this.deleteArticle(this.post.id);
+        }
+        catch(error) {
+          this.showSystemMessage(false, "delete");
+        }
+        this.showSystemMessage(true, "delete");
          //Issue a get request to update the articles
          bus.$emit("UpdateArticlesForDetailPage");
          this.$router.push({path:'/'});
@@ -90,9 +96,8 @@
                console.log(error);
                console.log(`Unsuccessful delete: post ${postiD}`);
                bus.$emit("UnsuccessfulDeleteFromDetail");
-               this.showSystemMessage(false, "edit");
-             }
-             this.showSystemMessage(true, "edit");
+               throw error;
+             }         
         },
         
      },
