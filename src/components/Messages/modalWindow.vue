@@ -64,7 +64,7 @@ export default {
   components: {
     'system-message': systemMessage,
   },
-  props: ['posts', 'editablePost', 'isModalEdit'],
+  props: ['editablePost', 'isModalEdit'],
   mixins : [systemMessageMixin],
 
   updated() {
@@ -96,8 +96,7 @@ export default {
   },
 
   watch: {
-    title: function (value) {
-      console.log("Watcher activated");
+    title: function () {
       if (!this.title) {
         this.hasError = true;
         this.errorMsg = "The title field is empty!";
@@ -108,7 +107,7 @@ export default {
 
     },
 
-    author: function (value) {
+    author: function () {
       if (!this.author) {
         this.hasError = true;
         this.errorMsg = "Author not selected!";
@@ -118,7 +117,7 @@ export default {
       }
     },
 
-    content: function (value) {
+    content: function () {
       if (!this.content) {
         this.hasError = true;
         this.errorMsg = "Content field is empty!";

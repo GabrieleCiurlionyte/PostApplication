@@ -6,6 +6,7 @@ import Routes from "./router/routes.js"
 import vueDebounce from 'vue-debounce'
 import apiRequestPlugin from './plugins/apiRequestPlugin';
 import { store } from './stores/systemMessageStore'
+import { modalWindowStore } from './stores/modalWindowStore';
 
 export const bus = new Vue();
 
@@ -23,6 +24,7 @@ Vue.prototype.$http = axios;
 new Vue({
   el: '#app',
   store,
+  modalWindowStore,
   render: h => h(App),
   router: router,
 })

@@ -25,7 +25,7 @@
     </button>
 
 
-    <modal-window v-if="showModal" @close="showModal = false" :posts="posts"
+    <modal-window v-if="showModal" @close="showModal = false"
       :editablePost="editableArticle"
       :isModalEdit="IsModalEdit"
       @UpdateArticles="getData(0);"
@@ -36,6 +36,7 @@
 
       <template #author-slot v-if="!IsModalEdit">
         <label for="author-drop-down">Select author:</label>
+        
         <drop-down id="author-drop-down" :authors="authors">
         </drop-down>
       </template>

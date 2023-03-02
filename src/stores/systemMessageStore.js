@@ -7,8 +7,9 @@ export const store = new Vuex.Store({
     state: {
         showSystemMessage : false,
         isSystemMessageSuccessful : true,
-        systemMessageMode : "delete",
         //possible array: delete, edit, create
+        systemMessageMode : "delete",
+        
     },
     mutations: {
         changeSystemMessageShow(state, value) {
