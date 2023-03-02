@@ -3,13 +3,10 @@
     <div class="modal-wrapper">
       <div class="modal-container">
 
-        <system-message id="error-message" class="is-danger" v-if="hasError">
-          <template #header-slot>
-            <p>Incorrect input</p>
-          </template>
-          <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
-          <template #body-slot>{{ errorMsg }}</template>
-        </system-message>
+        <validation-message id="error-message" class="is-danger" v-if="modalWindowStore.showError">
+          <template #button-slot><button class="delete" aria-label="delete" @click="changeModalWindowErrorShow(false)"></button></template>
+          <template #body-slot>{{ modalWindowStore.errorMsg }}</template>
+        </validation-message>
 
         <div class="modal-header">
           <div class="tile is-ancestor">
@@ -21,7 +18,7 @@
               </h1>
 
             </div>
-            <div class="tile" id="closeButton" @click="changeModalWindowShow">
+            <div class="tile" id="closeButton" @click="changeModalWindowShow(false)">
               <i class="fa-solid fa-x"></i>
             </div>
           </div>
@@ -42,7 +39,7 @@
           <textarea v-model.trim.lazy="modalWindowStore.content" id="fContent" class="textarea" placeholder="Enter your content..."
             rows="5" minlength="1" required></textarea>
 
-          <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
+          <button class="modal-default-button button is-primary" @click="handleSubmit">Submit</button>
 
 
         </div>
@@ -55,18 +52,21 @@
 
 
 import { bus } from "../../main";
-import systemMessage from "./systemMessage.vue";
-import systemMessageMixin from "../../Mixins/systemMessageMixin";
+import validationMessage from "../Messages/validationMessage.vue"
 import { mapState } from "vuex";
+import { modalWindowStore } from "../../store/modules/modalWindowStore";
+import modalWindowMixin from "../../Mixins/modalWindowMixin"
+import systemMessageMixin from "../../Mixins/systemMessageMixin";
+
 
 export default {
 
   name: 'modalWindow',
   components: {
-    'system-message': systemMessage,
+    'validation-message': validationMessage,
   },
   props: ['editablePost', 'isModalEdit'],
-  mixins : [systemMessageMixin],
+  mixins : [systemMessageMixin, modalWindowMixin],
 
   updated() {
     bus.$on('AuthorSelected', (data) => {
@@ -86,48 +86,36 @@ export default {
   },
 
   watch: {
-    title: function () {
-      if (!this.title) {
-        this.hasError = true;
-        this.errorMsg = "The title field is empty!";
-      }
-      else {
-        this.hasError = false;
-      }
-
+    'modalWindowStore.title': function () {
+      console.log("Watcher activated for title" + this.modalWindowStore.title);
+      this.validateWatcher(this.modalWindowStore.title, "The title field is empty!");
     },
 
-    author: function () {
-      if (!this.author) {
-        this.hasError = true;
-        this.errorMsg = "Author not selected!";
-      }
-      else {
-        this.hasError = false;
-      }
+    'modalWindowStore.author': function () {
+      console.log("Watcher activated for author");
+      this.validateWatcher(this.modalWindowStore.author, "Author not selected!");
     },
 
-    content: function () {
-      if (!this.content) {
-        this.hasError = true;
-        this.errorMsg = "Content field is empty!";
-      }
-      else {
-        this.hasError = false;
-      }
+    'modalWindowStore.content': function () {
+      console.log("Watcher activated for content");
+      this.validateWatcher(this.modalWindowStore.content, "Content field is empty!");
     },
   },
 
   methods: {
 
-    changeModalWindowShow(){
-      this.$store.commit("modalWindowStore/changeShowModal",false);
+    changeModalWindowShow(bool){
+      this.$store.commit("modalWindowStore/changeShowModal",bool);
     },
 
-    takeAction: function () {
-      if (this.isModalEdit) {
+    changeModalWindowErrorShow(bool) {
+      this.$store.commit("modalWindowStore/changeShowError",bool);
+    },
+
+    handleSubmit: function () {
+      if (this.modalWindowStore.isEditable) {
         //Send a put request for editablePost
-        this.putRequest(this.editablePost.id);
+        this.putRequest(this.modalWindowStore.editablePost.id);
         if (this.$router.currentRoute.path != '/') {
           console.log("update event emiited from detail modal");
           bus.$emit('UpdateArticles');
@@ -136,7 +124,7 @@ export default {
         else {
           console.log("update event emited from root modal");
           bus.$emit('UpdateArticles');
-          this.$emit("CloseModalWindow");
+          this.changeModalWindowShow(false);
         }
       }
       else {
@@ -146,14 +134,17 @@ export default {
     },
 
     validatePost: async function () {
-      if (!this.title || !this.author || !this.content) {
-        this.hasError = true;
-        this.errorMsg = "There are empty fields!";
+      if (!this.modalWindowStore.title || !this.modalWindowStore.author || !this.modalWindowStore.content) {
+        console.log("Incorrect input from valdiate post");
+        this.modalWindowStore.hasError = true;
+        this.modalWindowStore.errorMsg = "There are empty fields!";
+        this.modalWindowStore.showError = true;
       }
-      if (!this.hasError) {
+      if (!this.modalWindowStore.hasError) {
         await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
           this.showSystemMessage(false,"create");
         });
+        this.changeModalWindowShow(false);
         this.showSystemMessage(true, "create");
       }
     },

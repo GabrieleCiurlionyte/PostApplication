@@ -13,6 +13,18 @@ export default {
         this.$store.commit("modalWindowStore/changeEditMode", false);
       }
       this.$store.commit("modalWindowStore/changeShowModal", true);
-    }
+    },
+
+    async validateWatcher(object, errorMsg) {
+        if(!object) {
+          this.$store.commit("modalWindowStore/changeHasError", true);
+          this.$store.commit("modalWindowStore/changeShowError", true);
+          this.$store.commit("modalWindowStore/changeErrorMsg", errorMsg);
+          setTimeout(() => { this.$store.commit("modalWindowStore/changeShowError", false); }, 3000);
+        }
+        else {
+          this.$store.commit("modalWindowStore/changeHasError", false);
+        }
+      },
   }
 };
