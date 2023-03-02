@@ -4,6 +4,11 @@
           <template #button-slot><button class="delete" aria-label="delete"
           @click="changeSystemMessageShow"></button></template>
     </system-message>
+
+    <modal-window v-if="modalWindowStore.showModal"
+      @CloseModalWindow="changeModalWindowShow">
+
+    </modal-window>
    
     <router-view></router-view>
   </div>
@@ -13,7 +18,8 @@
 
 import systemMessage from './components/Messages/systemMessage.vue';
 import modalWindow from './components/Messages/modalWindow.vue';
-import { mapMutations, mapState } from "vuex";
+import { mapState } from "vuex";
+import { modalWindowStore } from './store/modules/modalWindowStore';
 
 
 
@@ -31,6 +37,9 @@ export default {
   methods: {
     changeSystemMessageShow() {
       this.$store.commit("systemMessageStore/changeSystemMessageShow",false);
+    },
+    changeModalWindowShow(){
+      this.$store.commit("modalWindowStore/changeShowModal",false);
     },
   },
   computed: {

@@ -5,8 +5,9 @@ Vue.use(Vuex);
 export default{
     namespaced: true,
     state: {
-        showModal: true,
+        showModal: false,
         isEditable : false,
+        modalHeader : "",
         hasError : false,
         errorMsg : "",
 
@@ -18,22 +19,35 @@ export default{
         //Editable post
         editablePost : null,
     },
-    mutation: {
-        changeShowModal(state, boolean) {
-            console.log("SHow modal changed" + boolean);
-            state.showModal = boolean;
+    mutations: {
+        changeTitle(state, msg) {
+            state.title = msg;
         },
-        changeEditMode(state, boolean) {
-            console.log("Edit mode changed" + boolean);
-            state.isEditable = boolean;
+        changeContent(state, msg) {
+            state.content = msg;
         },
-        changeHasError(state, boolean) {
-            console.log("Has error mode changed" + boolean);
-            state.hasError = boolean;
+        changeShowModal(state, value) {
+            console.log("SHow modal changed" + value);
+            state.showModal = value;
+        },
+        changeEditMode(state, value) {
+            console.log("Edit mode changed" + value);
+            state.isEditable = value;
+        },
+        changeHasError(state, value) {
+            console.log("Has error mode changed" + value);
+            state.hasError = value;
         },
         changeErrorMsg(state, msg) {
-            console.log("Error msg changed" + boolean);
+            console.log("Error msg changed" + msg);
             state.errorMsg = msg;
+        },
+        changeModalHeader(state, header) {
+            state.modalHeader = header;
+        },
+        changeEditablePost(state, post) {
+            console.log("Changed editable post" + post.postID);
+            state.editablePost = post;
         }
     },
     getters : {

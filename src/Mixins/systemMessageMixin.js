@@ -1,7 +1,6 @@
 export default {
     methods : {
         showSystemMessage(successState, messageMode){
-            console.log("Show system message called");
             this.$store.commit('systemMessageStore/changeSystemMessageSuccessState', successState);
             this.$store.commit('systemMessageStore/changeSystemMessageMode', messageMode);
             this.$store.commit('systemMessageStore/changeSystemMessageShow', true);

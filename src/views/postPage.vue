@@ -24,7 +24,7 @@
       <span>Add new article</span>
     </button>
 
-
+    <!--S
     <modal-window v-if="showModal" @close="showModal = false"
       :editablePost="editableArticle"
       :isModalEdit="IsModalEdit"
@@ -40,7 +40,7 @@
         <drop-down id="author-drop-down" :authors="authors">
         </drop-down>
       </template>
-    </modal-window>
+    </modal-window> -->
 
     <article class="message is-info" id="no-post-message" v-if="!hasPosts">
       <div class="message-body">
@@ -73,6 +73,8 @@ import dropDown from "../components/drop-down.vue";
 import systemMessage from "../components/Messages/systemMessage.vue";
 import { bus } from "../main";
 import systemMessageMixin from "../Mixins/systemMessageMixin";
+import modalWindowMixin from "../Mixins/modalWindowMixin";
+import { mapState } from "vuex";
 
 export default {
 
@@ -109,7 +111,7 @@ export default {
       showErrorPage : false,
     };
   },
-  mixins: [systemMessageMixin],
+  mixins: [systemMessageMixin,modalWindowMixin],
   mounted() {
 
   },
@@ -141,26 +143,22 @@ export default {
   },
 
   computed: {
-
+    ...mapState(["modalWindowStore", "systemMessageStore"]),
     hasPosts() {
       return (this.posts.length > 0 ? true : false);
     },
-
   },
 
   methods: {
 
     CreateArticle: function() {
-      this.modalHeader = "Add article";
-      this.IsModalEdit = false;
-      this.showModal = true;
+      this.showModalWindow(false, null);
     },
 
     EditArticle: function(post){
-      this.editableArticle = post;
-      this.modalHeader = "Edit article";
-      this.IsModalEdit = true;
-      this.showModal = true;
+      console.log("Sending to modal window this post");
+      console.log(post);
+      this.showModalWindow(true, post);
     },
     
 
@@ -224,11 +222,12 @@ export default {
     UnsuccessfulDelete: async function() {
       this.showSystemMessage(false, "delete");
     }
-
   },
 
 }
 </script>
+
+
 
 <style scoped>
 #search-bar {

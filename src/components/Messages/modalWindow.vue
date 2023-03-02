@@ -16,12 +16,12 @@
             <div class="tile is-12">
               <h1 class="title is-3">
                 <slot name="header">
-                  default header
+                  {{ modalWindowStore.modalHeader }}
                 </slot>
               </h1>
 
             </div>
-            <div class="tile" id="closeButton" @click="$emit('close')">
+            <div class="tile" id="closeButton" @click="changeModalWindowShow">
               <i class="fa-solid fa-x"></i>
             </div>
           </div>
@@ -31,7 +31,7 @@
 
 
           <label for="fTitle">Title:</label>
-          <input v-model.trim.lazy="title" class="input is-normal" id="fTitle" type="text" minlength="1"
+          <input v-model.trim.lazy="modalWindowStore.title" class="input is-normal" id="fTitle" type="text" minlength="1"
             placeholder="Enter your title..." required>
 
           <slot name="author-slot">
@@ -39,7 +39,7 @@
 
 
           <label for="fContent">Article Content:</label>
-          <textarea v-model.trim.lazy="content" id="fContent" class="textarea" placeholder="Enter your content..."
+          <textarea v-model.trim.lazy="modalWindowStore.content" id="fContent" class="textarea" placeholder="Enter your content..."
             rows="5" minlength="1" required></textarea>
 
           <button class="modal-default-button button is-primary" @click="takeAction">Submit</button>
@@ -57,6 +57,7 @@
 import { bus } from "../../main";
 import systemMessage from "./systemMessage.vue";
 import systemMessageMixin from "../../Mixins/systemMessageMixin";
+import { mapState } from "vuex";
 
 export default {
 
@@ -75,24 +76,13 @@ export default {
 
   data() {
     return {
-
-      title: "",
       author: "",
-      content: "",
       hasError: false,
       errorMsg: "",
     }
   },
-
-  created() {
-    if (this.isModalEdit) {
-      this.title = this.editablePost.title;
-      this.content = this.editablePost.body;
-    }
-    else {
-      this.title = "";
-      this.content = "";
-    }
+  computed: {
+    ...mapState(["modalWindowStore", "systemMessageStore"]),
   },
 
   watch: {
@@ -129,6 +119,10 @@ export default {
   },
 
   methods: {
+
+    changeModalWindowShow(){
+      this.$store.commit("modalWindowStore/changeShowModal",false);
+    },
 
     takeAction: function () {
       if (this.isModalEdit) {
