@@ -5,7 +5,7 @@ Vue.use(Vuex);
 export default{
     namespaced: true,
     state: {
-        showSystemMessage : true,
+        showSystemMessage : false,
         isSystemMessageSuccessful : true,
         //possible array: delete, edit, create
         systemMessageMode : "delete",

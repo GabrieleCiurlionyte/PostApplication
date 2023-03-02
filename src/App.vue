@@ -2,7 +2,7 @@
   <div>
     <system-message v-if="systemMessageStore.showSystemMessage">
           <template #button-slot><button class="delete" aria-label="delete"
-          @click="this.systemMessage.commit('changeSystemMessageShow', false)"></button></template>
+          @click="changeSystemMessageShow"></button></template>
     </system-message>
    
     <router-view></router-view>
@@ -29,7 +29,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["modalWindowStore", "systemMessageStore"]),
+    changeSystemMessageShow() {
+      this.$store.commit("systemMessageStore/changeSystemMessageShow",false);
+    },
   },
   computed: {
     ...mapState(["modalWindowStore", "systemMessageStore"]),

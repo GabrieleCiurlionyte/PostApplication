@@ -1,20 +1,20 @@
 
 <template>
   <article class="message validation-msg"
-    :class="{ 'is-danger': !this.isSystemMessageSuccessful, 'is-success': this.isSystemMessageSuccessful }">
+    :class="{ 'is-danger': !systemMessageStore.isSystemMessageSuccessful, 'is-success': systemMessageStore.isSystemMessageSuccessful }">
     <div class="message-header">
-      <p>{{ this.isSystemMessageSuccessful ? "Success" : "Error" }}</p>
+      <p>{{ systemMessageStore.isSystemMessageSuccessful ? "Success" : "Error" }}</p>
       <slot name="button-slot"></slot>
     </div>
     <div class="message-body">
-      {{ this.systemMessageMode + " " +(this.isSystemMessageSuccessful ? "successful" : "unsuccessful") }}
+      {{ systemMessageStore.systemMessageMode + " " +(systemMessageStore.isSystemMessageSuccessful ? "successful" : "unsuccessful") }}
     </div>
   </article>
 </template>
 
   
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 export default {
   components: {
   },
@@ -22,16 +22,9 @@ export default {
     return {
     }
   },
-  computed: mapState([
-    'showSystemMessage',
-    'isSystemMessageSuccessful',
-    'systemMessageMode',
-  ]),
-  methods: mapMutations([
-    'changeSystemMessageShow',
-    'changeSystemMessageSuccessState',
-    'changeSystemMessageMode',
-  ]),
+  computed: {
+    ...mapState(["modalWindowStore", "systemMessageStore"]),
+  },
 }
 
 </script>
