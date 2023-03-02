@@ -24,7 +24,7 @@
          <div class="card-content">
            <div class="content">
              <h2 class="title is-2">{{post.title}}</h2>
-             <h2 class="title is-2">{{ authorName }}</h2>
+             <h2 class="title is-2">{{ $authorsPlugin.getAuthorName(post) }}</h2>
            </div>
            <div class="media-content">
              <p class="subtitle is-4">{{post.body}}</p>

@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
 Vue.use(Vuex);
 
-export const modalWindowStore = new Vuex.Store({
+export default{
+    namespaced: true,
     state: {
         showModal: true,
         isEditable : false,
@@ -17,7 +17,6 @@ export const modalWindowStore = new Vuex.Store({
 
         //Editable post
         editablePost : null,
-
     },
     mutation: {
         changeShowModal(state, boolean) {
@@ -43,5 +42,4 @@ export const modalWindowStore = new Vuex.Store({
         showModal: state => state.showModal,
         errorMsg: state => state.errorMsg,
     }
-
-})
+}

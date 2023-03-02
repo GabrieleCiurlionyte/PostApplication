@@ -72,8 +72,6 @@ import modalWindow from "../components/Messages/modalWindow.vue";
 import dropDown from "../components/drop-down.vue";
 import systemMessage from "../components/Messages/systemMessage.vue";
 import { bus } from "../main";
-import { mapMutations } from "vuex";
-import { store } from "../stores/systemMessageStore";
 import systemMessageMixin from "../Mixins/systemMessageMixin";
 
 export default {
