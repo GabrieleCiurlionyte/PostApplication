@@ -4,9 +4,7 @@
           <template #button-slot><button class="delete" aria-label="delete"
           @click="changeSystemMessageShow(false)"></button></template>
     </system-message>
-    <modal-window v-if="showModal">
-      
-    </modal-window>  
+   
     <router-view></router-view>
   </div>
 </template>

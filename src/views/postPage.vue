@@ -36,7 +36,7 @@
 
       <template #author-slot v-if="!IsModalEdit">
         <label for="author-drop-down">Select author:</label>
-        
+
         <drop-down id="author-drop-down" :authors="authors">
         </drop-down>
       </template>
@@ -72,8 +72,9 @@ import modalWindow from "../components/Messages/modalWindow.vue";
 import dropDown from "../components/drop-down.vue";
 import systemMessage from "../components/Messages/systemMessage.vue";
 import { bus } from "../main";
-import { mapState, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 import { store } from "../stores/systemMessageStore";
+import systemMessageMixin from "../Mixins/systemMessageMixin";
 
 export default {
 
@@ -89,7 +90,6 @@ export default {
   },
   props: [
   ],
-
   data() {
     return {
 
@@ -111,7 +111,7 @@ export default {
       showErrorPage : false,
     };
   },
-
+  mixins: [systemMessageMixin],
   mounted() {
 
   },
@@ -120,7 +120,7 @@ export default {
     this.last_page = await this.$requestPlugin.getPageCount();
     this.searchMode = false;
     this.posts = await this.$requestPlugin.getPageData(0);
-    this.authors = await this.$requestPlugin.getAuthors();
+    this.authors = await this.$authorsPlugin.getAuthors();
   },
 
   beforeUpdate(){
@@ -147,10 +147,6 @@ export default {
     hasPosts() {
       return (this.posts.length > 0 ? true : false);
     },
-
-    showSystemMessage() {
-      return store.state.showSystemMessage;
-    }
 
   },
 
@@ -222,25 +218,13 @@ export default {
       this.ExecuteAPICall();
     },
 
-    methods: mapMutations([
-    'changeSystemMessageShow',
-    'changeSystemMessageSuccessState',
-    'changeSystemMessageMode',
-  ]),
-
     SuccessfulDelete: async function() {
       this.posts = await this.$requestPlugin.getPageData(0);
-      this.$store.commit('changeSystemMessageSuccessState', false);
-      this.$store.commit('changeSystemMessageMode', "delete");
-      this.$store.commit('changeSystemMessageShow', true);
-      setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
+      this.showSystemMessage(true, "delete");
     },
 
-    UnsuccessfulDelete: function() {
-      this.$store.commit('changeSystemMessageSuccessState', false);
-      this.$store.commit('changeSystemMessageMode', "delete");
-      this.$store.commit('changeSystemMessageShow', true);
-      setTimeout(() => { this.$store.commit('changeSystemMessageShow', false); }, 3000);
+    UnsuccessfulDelete: async function() {
+      this.showSystemMessage(false, "delete");
     }
 
   },

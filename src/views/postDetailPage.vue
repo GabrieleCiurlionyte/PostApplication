@@ -1,7 +1,7 @@
 <template>
   <div id="page">
     <error-page v-if="showError"></error-page>
-    <main-detail-page v-if="!showError" :post="post" :authors = "authors"></main-detail-page>
+    <main-detail-page v-if="!showError" :post="post"></main-detail-page>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
     }
   },
   async created() {
-    this.authors = await this.$requestPlugin.getAuthors();
+    this.authors = await this.$authorsPlugin.getAuthors();
     this.getData();
   },
   computed: {

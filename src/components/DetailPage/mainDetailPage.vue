@@ -16,7 +16,7 @@
          @ConfirmConfirmation="confirmConfirmation()">
        <template #text-slot><b>Do you really want to delete post?</b><br> 
          Name: {{post.title}} <br>
-         Author: {{authorName(post)}}</template>
+         Author: {{ authorName }}</template>
      </confirmation-window>
      
      <h1 class="title is-1">Post detail page</h1>
@@ -24,7 +24,7 @@
          <div class="card-content">
            <div class="content">
              <h2 class="title is-2">{{post.title}}</h2>
-             <h2 class="title is-2">{{authorName(post)}}</h2>
+             <h2 class="title is-2">{{ authorName }}</h2>
            </div>
            <div class="media-content">
              <p class="subtitle is-4">{{post.body}}</p>
@@ -46,8 +46,8 @@
    import confirmationWindow from "../Messages/confirmationWindow.vue";
    import modalWindow from "../Messages/modalWindow.vue";
    import systemMessage from "../Messages/systemMessage.vue"
-   import { AuthorCallMixin } from "../../Mixins/AuthorCallMixin";
    import systemMessageMixin from "../../Mixins/systemMessageMixin";
+   import {AuthorCallMixin} from "../../Mixins/AuthorCallMixin";
    import { bus } from "../../main";
   
    export default {
@@ -58,16 +58,21 @@
          "system-message" : systemMessage,
      },
      mixins: [AuthorCallMixin, systemMessageMixin],
-     props: ['post', 'authors'],
+     props: ['post'],
      data() {
        return {
          showModal : false,
          showConfirmation : false,
+         authors : null,
+         authorName : "defaultAuthorName",
        }
      },
-     mounted() {
-     },
      created() {
+      this.authors = this.$authorsPlugin.getAuthors();
+     },
+     beforeMount(){
+      this.authorName = this.$authorsPlugin.getAuthorName(post);
+      console.log("Before mount hook called.");
      },
      computed: {
      },
