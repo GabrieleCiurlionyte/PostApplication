@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import modalWindowStore from './modules/modalWindowStore'
-import systemMessageStore from '../Mixins/systemMessageMixin'
+import systemMessageStore from './modules/systemMessageStore'
 Vue.use(Vuex);
 
-
-export default new Vuex.Store({
+export const store = new Vuex.Store({
     modules: {
         modalWindowStore,
         systemMessageStore,

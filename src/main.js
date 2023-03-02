@@ -7,7 +7,7 @@ import Routes from "./router/routes.js"
 import vueDebounce from 'vue-debounce'
 import apiRequestPlugin from './plugins/apiRequestPlugin';
 import authorsPlugin from './plugins/authorsPlugin';
-import store from './store';
+import {store} from "./store/index";
 
 export const bus = new Vue();
 
@@ -27,6 +27,7 @@ Vue.prototype.$http = axios;
 
 new Vue({
   el: '#app',
+  store,
   render: h => h(App),
   router: router,
 })
