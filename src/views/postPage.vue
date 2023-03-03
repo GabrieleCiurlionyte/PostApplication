@@ -188,6 +188,7 @@ export default {
 
     SuccessfulDelete: async function () {
       this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
+      this.$store.commit('articleStore/changeLastPage', await this.$requestPlugin.getPageCount());
       this.showSystemMessage(true, "delete");
     },
 

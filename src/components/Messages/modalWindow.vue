@@ -74,7 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["modalWindowStore", "systemMessageStore"]),
+    ...mapState(["modalWindowStore", "systemMessageStore", "articleStore"]),
   },
 
   watch: {
@@ -114,6 +114,7 @@ export default {
         this.showSystemMessage(true, "edit");
         if (this.$router.currentRoute.path != '/') {
           this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
+          this.$store.commit('articleStore/changeCurrentPage', 1)
           bus.$emit('UpdateArticles');
           this.$router.push({ path: '/' });
         }
@@ -142,7 +143,8 @@ export default {
           this.modalWindowStore.showError = false;
           this.showSystemMessage(false, "create");
         });
-        console.log("Successful post method call")
+        console.log("Successful post method call");
+        this.modalWindowStore.hasError = false;
         this.changeModalWindowShow(false);
         this.showSystemMessage(true, "create");
       }
