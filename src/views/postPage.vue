@@ -16,31 +16,12 @@
       </template>
     </search-bar>
 
-
     <button class="button is-primary" @click="CreateArticle()" >
       <span class="icon">
         <i class="fa-solid fa-plus"></i>
       </span>
       <span>Add new article</span>
     </button>
-
-    <!--S
-    <modal-window v-if="showModal" @close="showModal = false"
-      :editablePost="editableArticle"
-      :isModalEdit="IsModalEdit"
-      @UpdateArticles="getData(0);"
-      @CloseModalWindow="showModal = false">
-      <template #header id="modal-header">
-        {{ modalHeader }}
-      </template>
-
-      <template #author-slot v-if="!IsModalEdit">
-        <label for="author-drop-down">Select author:</label>
-
-        <drop-down id="author-drop-down" :authors="authors">
-        </drop-down>
-      </template>
-    </modal-window> -->
 
     <article class="message is-info" id="no-post-message" v-if="!hasPosts">
       <div class="message-body">
@@ -50,12 +31,11 @@
 
     <h2 class="subtitle is-2"></h2>
     <template v-if="hasPosts">
-      <pagination-page :posts="posts" :authors="authors" @rerenderArticles=getData(0)
+      <pagination-page :posts="articleStore.articles" :authors="authors" @rerenderArticles=getData(0)
         @unsuccessfulDelete="UnsuccessfulDelete()" @successfulDelete="SuccessfulDelete()"
         @EditArticle="EditArticle($event)"></pagination-page>
       <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
-        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
-        :last_page="last_page"></pagination-element>
+        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()"></pagination-element>
     </template>
   </template>
   </div>
@@ -67,13 +47,10 @@ import paginationPage from "../components/Article/paginationPage.vue";
 import errorPage from "./404Page.vue";
 import paginationElement from "../components/Article/paginationElement.vue";
 import searchBar from "../components/searchBar.vue";
-import pictureButton from "../components/pictureButton.vue";
-import modalWindow from "../components/Messages/modalWindow.vue";
-import dropDown from "../components/drop-down.vue";
-import systemMessage from "../components/Messages/systemMessage.vue";
 import { bus } from "../main";
 import systemMessageMixin from "../Mixins/systemMessageMixin";
 import modalWindowMixin from "../Mixins/modalWindowMixin";
+import articleStoreMixin from "../Mixins/ArticleStoreMixin";
 import { mapState } from "vuex";
 
 export default {
@@ -82,22 +59,14 @@ export default {
     'pagination-page': paginationPage,
     'pagination-element': paginationElement,
     'search-bar': searchBar,
-    'picture-button': pictureButton,
-    'modal-window': modalWindow,
-    'drop-down' : dropDown,
-    'system-message' : systemMessage,
     'error-page' : errorPage,
   },
   props: [
   ],
   data() {
     return {
-
-      posts: [],
       authors: [],
       POSTS_PER_PAGE: 4,
-      current_page: 1,
-      last_page: 1,
 
       searchMode: false,
       searchQuery: "",
@@ -105,22 +74,22 @@ export default {
       showErrorPage : false,
     };
   },
-  mixins: [systemMessageMixin,modalWindowMixin],
+  mixins: [systemMessageMixin,modalWindowMixin,articleStoreMixin],
   mounted() {
 
   },
 
   async created() {
-    this.last_page = await this.$requestPlugin.getPageCount();
+    this.articleStore.lastPage = await this.$requestPlugin.getPageCount();
     this.searchMode = false;
-    this.posts = await this.$requestPlugin.getPageData(0);
+    this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
     this.authors = await this.$authorsPlugin.getAuthors();
   },
 
   beforeUpdate(){
     bus.$on('UpdateArticles', async () => {
       console.log("update event received to root");
-      this.posts = await this.$requestPlugin.getPageData(0);
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
     });
 
     bus.$on('SuccessfulDeleteFromDetail', () =>{
@@ -132,14 +101,14 @@ export default {
     });
 
     bus.$on('UpdateArticlesForDetailPage', async () =>{
-      this.posts = await this.$requestPlugin.getPageData(0);
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
     });
   },
 
   computed: {
-    ...mapState(["modalWindowStore", "systemMessageStore"]),
+    ...mapState(["modalWindowStore", "systemMessageStore", "articleStore"]),
     hasPosts() {
-      return (this.posts.length > 0 ? true : false);
+      return (this.articleStore.articles.length > 0 ? true : false);
     },
   },
 
@@ -150,8 +119,6 @@ export default {
     },
 
     EditArticle: function(post){
-      console.log("Sending to modal window this post");
-      console.log(post);
       this.showModalWindow(true, post);
     },
     
@@ -159,7 +126,7 @@ export default {
     async getSearchQuery(pageNumber) {
       if (this.searchQuery === "") {
         this.searchMode = false;
-        this.current_page = 1;
+        this.$store.commit('articleStore/changeCurrentPage', 1);
         this.asyncExecuteAPICall();
       }
       try {
@@ -167,9 +134,10 @@ export default {
         const response = await this.$http.get(
           `http://localhost:3000/Articles?q=${this.searchQuery}&_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
         );
-        this.posts = response.data;
-        this.current_page = 1;
-        console.log(this.posts);
+        this.$store.commit('articleStore/updateArticles', response.data);
+        this.$store.commit('articleStore/changeCurrentPage', 1);
+        console.log("Search query results");
+        console.log(response.data)
       } catch (error) {
         this.searchMode = false;
         console.log(error);
@@ -179,37 +147,37 @@ export default {
 
     async asyncExecuteAPICall() {
       if (!(this.searchMode)) {
-        this.posts = await this.$requestPlugin.getPageData(this.current_page);
+        this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(this.articleStore.currentPage));
       }
       else {
-        this.getSearchQuery(this.current_page, this.searchQuery);
+        this.getSearchQuery(this.articleStore.currentPage, this.searchQuery);
       }
     },
 
     GoToNextPage() {
-      this.current_page += 1;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', this.articleStore.currentPage + 1);
+      this.asyncExecuteAPICall();
     },
 
     GoToPreviousPage() {
-      if (this.current_page != 1) {
-        this.current_page -= 1;
-        this.ExecuteAPICall();
+      if (this.articleStore.currentPage != 1) {
+        this.$store.commit('articleStore/changeCurrentPage', this.articleStore.currentPage - 1);
+        this.asyncExecuteAPICall();
       }
     },
 
     GoToFirstPage() {
-      this.current_page = 1;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', 1);
+      this.asyncExecuteAPICall();
     },
 
     GoToLastPage() {
-      this.current_page = this.last_page;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', this.articleStore.lastPage);
+      this.asyncExecuteAPICall();
     },
 
     SuccessfulDelete: async function() {
-      this.posts = await this.$requestPlugin.getPageData(0);
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
       this.showSystemMessage(true, "delete");
     },
 

@@ -4,10 +4,10 @@
       <div class="modal-container">
 
         <validation-message id="error-message" class="is-danger" v-if="modalWindowStore.showError">
-          <template #button-slot><button class="delete" aria-label="delete" @click="changeModalWindowErrorShow(false)"></button></template>
+          <template #button-slot><button class="delete" aria-label="delete"
+              @click="changeModalWindowErrorShow(false)"></button></template>
           <template #body-slot>{{ modalWindowStore.errorMsg }}</template>
         </validation-message>
-
         <div class="modal-header">
           <div class="tile is-ancestor">
             <div class="tile is-12">
@@ -23,25 +23,18 @@
             </div>
           </div>
         </div>
-
         <div class="modal-body">
-
-
           <label for="fTitle">Title:</label>
           <input v-model.trim.lazy="modalWindowStore.title" class="input is-normal" id="fTitle" type="text" minlength="1"
             placeholder="Enter your title..." required>
 
           <slot name="author-slot">
           </slot>
-
-
           <label for="fContent">Article Content:</label>
-          <textarea v-model.trim.lazy="modalWindowStore.content" id="fContent" class="textarea" placeholder="Enter your content..."
-            rows="5" minlength="1" required></textarea>
+          <textarea v-model.trim.lazy="modalWindowStore.content" id="fContent" class="textarea"
+            placeholder="Enter your content..." rows="5" minlength="1" required></textarea>
 
           <button class="modal-default-button button is-primary" @click="handleSubmit">Submit</button>
-
-
         </div>
       </div>
     </div>
@@ -57,6 +50,7 @@ import { mapState } from "vuex";
 import { modalWindowStore } from "../../store/modules/modalWindowStore";
 import modalWindowMixin from "../../Mixins/modalWindowMixin"
 import systemMessageMixin from "../../Mixins/systemMessageMixin";
+import articleStoreMixin from "../../Mixins/ArticleStoreMixin";
 
 
 export default {
@@ -66,7 +60,7 @@ export default {
     'validation-message': validationMessage,
   },
   props: ['editablePost', 'isModalEdit'],
-  mixins : [systemMessageMixin, modalWindowMixin],
+  mixins: [systemMessageMixin, modalWindowMixin, articleStoreMixin],
 
   updated() {
     bus.$on('AuthorSelected', (data) => {
@@ -76,9 +70,7 @@ export default {
 
   data() {
     return {
-      author: "",
-      hasError: false,
-      errorMsg: "",
+
     }
   },
   computed: {
@@ -104,12 +96,12 @@ export default {
 
   methods: {
 
-    changeModalWindowShow(bool){
-      this.$store.commit("modalWindowStore/changeShowModal",bool);
+    changeModalWindowShow(bool) {
+      this.$store.commit("modalWindowStore/changeShowModal", bool);
     },
 
     changeModalWindowErrorShow(bool) {
-      this.$store.commit("modalWindowStore/changeShowError",bool);
+      this.$store.commit("modalWindowStore/changeShowError", bool);
     },
 
     handleSubmit: async function () {
@@ -117,23 +109,24 @@ export default {
         await this.$requestPlugin.putArticle(this.modalWindowStore.editablePost.id, this.modalWindowStore.title, this.modalWindowStore.content, this.modalWindowStore.editablePost).catch(error => {
           this.modalWindowStore.hasError = false;
           this.modalWindowStore.showError = false;
-          this.showSystemMessage(false,"edit");
+          this.showSystemMessage(false, "edit");
         });
-        this.showSystemMessage(true,"edit");
+        this.showSystemMessage(true, "edit");
         if (this.$router.currentRoute.path != '/') {
-          console.log("update event emiited from detail modal");
+          this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
           bus.$emit('UpdateArticles');
           this.$router.push({ path: '/' });
         }
         else {
-          console.log("update event emited from root modal");
+          this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
           bus.$emit('UpdateArticles');
           this.changeModalWindowShow(false);
         }
       }
       else {
         this.validatePost();
-        //TODO: update after creation
+        //TODO: test
+        this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
       }
     },
 
@@ -144,19 +137,20 @@ export default {
         this.modalWindowStore.showError = true;
       }
       if (!this.modalWindowStore.hasError) {
-        await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
+        await this.$requestPlugin.postArticle(this.modalWindowStore.title, this.modalWindowStore.content, this.modalWindowStore.author).catch(error => {
           this.modalWindowStore.hasError = false;
           this.modalWindowStore.showError = false;
-          
-          
-          this.showSystemMessage(false,"create");
+          this.showSystemMessage(false, "create");
         });
+        console.log("Successful post method call")
         this.changeModalWindowShow(false);
         this.showSystemMessage(true, "create");
       }
     },
+    //TODO: fixed put article by adding modalWindowStore access
+    //Method not called
     putRequest: async function (postID) {
-      if (!this.hasError) {
+      if (!this.modalWindowStore.hasError) {
         let date = new Date().toString();
         await this.$requestPlugin.putArticle(postID, this.title, this.content, this.editablePost).catch(error => {
           this.showSystemMessage(false, "edit");

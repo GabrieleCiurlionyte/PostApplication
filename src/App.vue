@@ -52,7 +52,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["modalWindowStore", "systemMessageStore"]),
+    ...mapState(["modalWindowStore", "systemMessageStore", "articleStore"]),
   },
 
 }

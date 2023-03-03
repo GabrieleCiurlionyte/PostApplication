@@ -3,7 +3,6 @@ export default {
     showModalWindow(isEdit, post) {
       if (isEdit) {
         this.$store.commit("modalWindowStore/changeModalHeader", "Edit post");
-        //Add editable post
         this.$store.commit("modalWindowStore/changeEditablePost", post);
         this.$store.commit("modalWindowStore/changeTitle", post.title);
         this.$store.commit("modalWindowStore/changeContent", post.body);
