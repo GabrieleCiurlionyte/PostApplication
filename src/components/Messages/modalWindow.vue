@@ -142,6 +142,8 @@ export default {
       }
       if (!this.modalWindowStore.hasError) {
         await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
+          this.modalWindowStore.hasError = false;
+          this.modalWindowStore.showError = false;
           this.showSystemMessage(false,"create");
         });
         this.changeModalWindowShow(false);

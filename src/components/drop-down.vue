@@ -33,7 +33,6 @@ export default {
     components: {
     },
     props: [
-        'authors',
     ],
     data() {
         return {
@@ -41,11 +40,13 @@ export default {
             isActive : false, 
             selectedAuthor : null,
             isSelected : false,
+            authors : null,
         }
     },
     mounted() {
     },
-    created() {
+    async created() {
+        this.authors = await this.$authorsPlugin.getAuthors();
     },
     computed: {
         
@@ -53,6 +54,7 @@ export default {
     },
     methods: {
         SelectAuthor : function(author){
+            this.$store.commit('modalWindowStore/changeAuthor', author);
             this.selectedAuthor = author;
             this.ButtonName = author.name;
             this.isSelected = true;

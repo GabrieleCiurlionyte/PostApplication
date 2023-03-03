@@ -166,7 +166,7 @@ export default {
       if (this.searchQuery === "") {
         this.searchMode = false;
         this.current_page = 1;
-        this.ExecuteAPICall();
+        this.asyncExecuteAPICall();
       }
       try {
         this.searchMode = true;

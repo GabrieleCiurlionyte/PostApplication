@@ -23,18 +23,24 @@ export default {
     editablePost: null
   },
   mutations: {
+    //Modal window variable modification
     changeTitle(state, msg) {
       state.title = msg;
     },
     changeContent(state, msg) {
       state.content = msg;
     },
+    changeAuthor(state, author) {
+      state.author = author;
+    },
+    //Modal window configurations
     changeShowModal(state, value) {
       state.showModal = value;
     },
     changeEditMode(state, value) {
       state.isEditable = value;
     },
+    //Error handling
     changeHasError(state, value) {
       state.hasError = value;
     },

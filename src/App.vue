@@ -8,6 +8,13 @@
     <modal-window v-if="modalWindowStore.showModal"
       @CloseModalWindow="changeModalWindowShow">
 
+      <template #author-slot v-if="!modalWindowStore.isEditable">
+        <label for="author-drop-down">Select author:<br></label>
+      
+        <drop-down id="author-drop-down" v-if="!modalWindowStore.isEditable">
+        </drop-down>
+      
+      </template>
     </modal-window>
    
     <router-view></router-view>
@@ -20,6 +27,7 @@ import systemMessage from './components/Messages/systemMessage.vue';
 import modalWindow from './components/Messages/modalWindow.vue';
 import { mapState } from "vuex";
 import { modalWindowStore } from './store/modules/modalWindowStore';
+import dropDown from './components/drop-down.vue';
 
 
 
@@ -28,6 +36,7 @@ export default {
   components: {
     'system-message': systemMessage,
     'modal-window' : modalWindow,
+    'drop-down' : dropDown,
   },
   data() {
     return {
