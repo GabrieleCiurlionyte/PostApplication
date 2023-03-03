@@ -20,7 +20,7 @@
                 </template>
 
                 <li>
-                    <a class="pagination-link is-current" :aria-label="current_page" aria-current="page">{{
+                    <a class="pagination-link is-current" aria-current="page">{{
                         articleStore.currentPage
                     }}</a>
                 </li>

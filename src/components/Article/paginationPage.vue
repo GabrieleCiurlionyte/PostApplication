@@ -67,7 +67,9 @@ export default {
 
     authorName(post){
       let authorID = post.author;
-      return this.authors.filter((author) => author.id == authorID)[0].name;
+      if(this.authors.length != 0) {
+        return this.authors.filter((author) => author.id == authorID)[0].name;
+      } 
     },
 
     editArticle: function (post) {
