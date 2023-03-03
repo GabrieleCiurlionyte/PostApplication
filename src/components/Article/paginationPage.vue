@@ -27,7 +27,6 @@ import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../Messages/confirmationWindow.vue";
 import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
 
-
 export default {
 
   name: 'app',
@@ -58,8 +57,6 @@ export default {
       }
       this.showConfirmation = false;
     },
-
-
     showConfirmationBox(post) {
       this.showConfirmation = true;
       this.currentDeletionPost = post;
