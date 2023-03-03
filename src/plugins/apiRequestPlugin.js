@@ -58,9 +58,16 @@ requestPlugin.deletePost = async function(postID) {
   return response.data;
 };
 
+requestPlugin.getAllSearchResults = async function(searchQuery) {
+  const response = await this.http.get(
+    `/Articles?q=${searchQuery}`
+  );
+  return response.data;
+};
+
 requestPlugin.searchQuery = async function(searchQuery, pageNumber) {
   const response = await this.http.get(
-    `http://localhost:3000/Articles?q=${searchQuery}&_page=${pageNumber}&_limit=${POSTS_PER_PAGE}`
+    `/Articles?q=${searchQuery}&_page=${pageNumber}&_limit=${POSTS_PER_PAGE}`
   );
   return response.data;
 };

@@ -18,22 +18,6 @@ authorsPlugin.getAuthors = async function() {
   }
 };
 
-authorsPlugin.getAuthorName = async function(post) {
-  console.log("Calculate author name");
-  if(authorsPlugin.authors.length == 0) {
-    authorsPlugin.authors = await authorsPlugin.getAuthors();
-  }
-  let authorID = post.author;
-  if(authorsPlugin.authors.filter(author => author.id == authorID)[0].name != null) {
-    console.log("Author name found");
-    return authorsPlugin.authors.filter(author => author.id == authorID)[0].name;
-  }
-  else {
-    //TODO: custom exception
-    throw error; 
-  }
-  
-};
 
 export default {
   install(Vue) {

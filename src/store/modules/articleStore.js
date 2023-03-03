@@ -22,6 +22,6 @@ export default{
         changeLastPage(state, page) {
             state.lastPage = page;
             console.log("Changed last page");
-        }
+        },
     },
 }

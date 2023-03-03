@@ -4,40 +4,40 @@
     <error-page v-if="showErrorPage"></error-page>
     <template v-if="!showErrorPage">
 
-    <h1 class="title is-1">Post page</h1>
+      <h1 class="title is-1">Post page</h1>
 
-    <search-bar id="search-bar">
-      <template #input-slot>
-        <input class="input" type="search" placeholder="Search..." v-model.lazy.trim="searchQuery"
-          @focusout="getSearchQuery(1)" @keyup.enter="getSearchQuery(1)" />
+      <search-bar id="search-bar">
+        <template #input-slot>
+          <input class="input" type="search" placeholder="Search..." v-model.lazy.trim="searchQuery"
+            @focusout="getSearchQuery(1)" @keyup.enter="getSearchQuery(1)" />
+        </template>
+        <template #icon-slot>
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </template>
+      </search-bar>
+
+      <button class="button is-primary" @click="CreateArticle()">
+        <span class="icon">
+          <i class="fa-solid fa-plus"></i>
+        </span>
+        <span>Add new article</span>
+      </button>
+
+      <article class="message is-info" id="no-post-message" v-if="!hasPosts">
+        <div class="message-body">
+          There are no posts currently... Try to add one..
+        </div>
+      </article>
+
+      <h2 class="subtitle is-2"></h2>
+      <template v-if="hasPosts">
+        <pagination-page :posts="articleStore.articles" :authors="authors" @rerenderArticles=getData(0)
+          @unsuccessfulDelete="UnsuccessfulDelete()" @successfulDelete="SuccessfulDelete()"
+          @EditArticle="EditArticle($event)"></pagination-page>
+        <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
+          @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()"></pagination-element>
       </template>
-      <template #icon-slot>
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </template>
-    </search-bar>
-
-    <button class="button is-primary" @click="CreateArticle()" >
-      <span class="icon">
-        <i class="fa-solid fa-plus"></i>
-      </span>
-      <span>Add new article</span>
-    </button>
-
-    <article class="message is-info" id="no-post-message" v-if="!hasPosts">
-      <div class="message-body">
-        There are no posts currently... Try to add one..
-      </div>
-    </article>
-
-    <h2 class="subtitle is-2"></h2>
-    <template v-if="hasPosts">
-      <pagination-page :posts="articleStore.articles" :authors="authors" @rerenderArticles=getData(0)
-        @unsuccessfulDelete="UnsuccessfulDelete()" @successfulDelete="SuccessfulDelete()"
-        @EditArticle="EditArticle($event)"></pagination-page>
-      <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
-        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()"></pagination-element>
     </template>
-  </template>
   </div>
 </template>
 
@@ -59,7 +59,7 @@ export default {
     'pagination-page': paginationPage,
     'pagination-element': paginationElement,
     'search-bar': searchBar,
-    'error-page' : errorPage,
+    'error-page': errorPage,
   },
   props: [
   ],
@@ -70,11 +70,12 @@ export default {
 
       searchMode: false,
       searchQuery: "",
+      searchResults: null,
 
-      showErrorPage : false,
+      showErrorPage: false,
     };
   },
-  mixins: [systemMessageMixin,modalWindowMixin,articleStoreMixin],
+  mixins: [systemMessageMixin, modalWindowMixin, articleStoreMixin],
   mounted() {
 
   },
@@ -86,21 +87,21 @@ export default {
     this.authors = await this.$authorsPlugin.getAuthors();
   },
 
-  beforeUpdate(){
+  beforeUpdate() {
     bus.$on('UpdateArticles', async () => {
       console.log("update event received to root");
       this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
     });
 
-    bus.$on('SuccessfulDeleteFromDetail', () =>{
+    bus.$on('SuccessfulDeleteFromDetail', () => {
       this.SuccessfulDelete();
     });
 
-    bus.$on('UnsuccessfulDeleteFromDetail', () =>{
+    bus.$on('UnsuccessfulDeleteFromDetail', () => {
       this.UnsuccessfulDelete();
     });
 
-    bus.$on('UpdateArticlesForDetailPage', async () =>{
+    bus.$on('UpdateArticlesForDetailPage', async () => {
       this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
     });
   },
@@ -114,34 +115,42 @@ export default {
 
   methods: {
 
-    CreateArticle: function() {
+    CreateArticle: function () {
       this.showModalWindow(false, null);
     },
 
-    EditArticle: function(post){
+    EditArticle: function (post) {
       this.showModalWindow(true, post);
     },
-    
 
-    async getSearchQuery(pageNumber) {
+
+    async getSearchQuery(page) {
       if (this.searchQuery === "") {
         this.searchMode = false;
         this.$store.commit('articleStore/changeCurrentPage', 1);
         this.asyncExecuteAPICall();
       }
-      try {
-        this.searchMode = true;
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles?q=${this.searchQuery}&_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
-        );
-        this.$store.commit('articleStore/updateArticles', response.data);
-        this.$store.commit('articleStore/changeCurrentPage', 1);
-        console.log("Search query results");
-        console.log(response.data)
-      } catch (error) {
-        this.searchMode = false;
-        console.log(error);
+      else {
+        try {
+          this.searchMode = true;
+          this.calculateSearchQueryLength();
+          return this.$requestPlugin.searchQuery(this.searchQuery, page);
+        } catch (error) {
+          this.searchMode = false;
+          console.log(error);
+        }
       }
+
+    },
+
+    async calculateSearchQueryLength() {
+      let allSearchResults = await this.$requestPlugin.getAllSearchResults(this.searchQuery);
+      console.log("All search results");
+      console.log(allSearchResults);
+      var quotient = Math.floor(allSearchResults.length / this.POSTS_PER_PAGE);
+      var remainder = allSearchResults.length  % this.POSTS_PER_PAGE;
+      var pageCount = remainder == 0 ? quotient : quotient + 1;
+      this.$store.commit('articleStore/changeLastPage', pageCount);
     },
 
 
@@ -150,7 +159,8 @@ export default {
         this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(this.articleStore.currentPage));
       }
       else {
-        this.getSearchQuery(this.articleStore.currentPage, this.searchQuery);
+        this.$store.commit('articleStore/updateArticles', await this.getSearchQuery(this.articleStore.currentPage));
+        ;
       }
     },
 
@@ -176,12 +186,12 @@ export default {
       this.asyncExecuteAPICall();
     },
 
-    SuccessfulDelete: async function() {
+    SuccessfulDelete: async function () {
       this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
       this.showSystemMessage(true, "delete");
     },
 
-    UnsuccessfulDelete: async function() {
+    UnsuccessfulDelete: async function () {
       this.showSystemMessage(false, "delete");
     }
   },
@@ -204,5 +214,4 @@ export default {
 h1 {
   text-align: center;
 }
-
 </style>
