@@ -99,12 +99,6 @@ export default {
       current_page: 1,
       last_page: 1,
 
-      editableArticle: null,
-      //Modal window properties
-      showModal: false,
-      IsModalEdit : false,
-      modalHeader : "Default header",
-         
       searchMode: false,
       searchQuery: "",
 

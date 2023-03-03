@@ -112,10 +112,14 @@ export default {
       this.$store.commit("modalWindowStore/changeShowError",bool);
     },
 
-    handleSubmit: function () {
+    handleSubmit: async function () {
       if (this.modalWindowStore.isEditable) {
-        //Send a put request for editablePost
-        this.putRequest(this.modalWindowStore.editablePost.id);
+        await this.$requestPlugin.putArticle(this.modalWindowStore.editablePost.id, this.modalWindowStore.title, this.modalWindowStore.content, this.modalWindowStore.editablePost).catch(error => {
+          this.modalWindowStore.hasError = false;
+          this.modalWindowStore.showError = false;
+          this.showSystemMessage(false,"edit");
+        });
+        this.showSystemMessage(true,"edit");
         if (this.$router.currentRoute.path != '/') {
           console.log("update event emiited from detail modal");
           bus.$emit('UpdateArticles');
@@ -135,7 +139,6 @@ export default {
 
     validatePost: async function () {
       if (!this.modalWindowStore.title || !this.modalWindowStore.author || !this.modalWindowStore.content) {
-        console.log("Incorrect input from valdiate post");
         this.modalWindowStore.hasError = true;
         this.modalWindowStore.errorMsg = "There are empty fields!";
         this.modalWindowStore.showError = true;
@@ -144,6 +147,8 @@ export default {
         await this.$requestPlugin.postArticle(this.title, this.content, this.author).catch(error => {
           this.modalWindowStore.hasError = false;
           this.modalWindowStore.showError = false;
+          
+          
           this.showSystemMessage(false,"create");
         });
         this.changeModalWindowShow(false);
