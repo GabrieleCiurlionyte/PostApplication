@@ -6,46 +6,45 @@
             <ul class="pagination-list">
 
 
-                <li v-if="!(current_page < 3)">
+                <li v-if="!(articleStore.currentPage < 3)">
                     <a class="pagination-link" aria-label="Goto page 1" @click="GoToFirstPage">1</a>
                 </li>
 
-                <template v-if="current_page > 1">
-                    <li v-if="current_page > 2">
-                        <span class="pagination-ellipsis">&hellip;</span>
+                <template v-if="articleStore.currentPage > 1">
+                    <li v-if="articleStore.currentPage > 2">
+                        <span class="pagination-ellipsis" v-if="!(articleStore.lastPage < 4)">&hellip;</span>
                     </li>
                     <li>
-                        <a class="pagination-link">{{ current_page - 1}}</a>
+                        <a class="pagination-link" @click="GoToPreviousPage">{{ articleStore.currentPage - 1 }}</a>
                     </li>
                 </template>
 
-
                 <li>
-                    <a class="pagination-link is-current" :aria-label="current_page" aria-current="page">{{
-                        current_page
+                    <a class="pagination-link is-current" aria-current="page">{{
+                        articleStore.currentPage
                     }}</a>
                 </li>
 
-                <li v-if="current_page + 1 == last_page">
-                    <a class="pagination-link">{{ current_page + 1 }}</a>
+                <li v-if="articleStore.currentPage + 1 == articleStore.lastPage">
+                    <a class="pagination-link" @click="GoToNextPage">{{ articleStore.currentPage + 1 }}</a>
                 </li>
 
 
-                <template v-if="current_page < last_page - 1">
-                    <li>
+                <template v-if="articleStore.currentPage < articleStore.lastPage - 1">
+                    <li v-if="!(articleStore.lastPage < 3)">
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
                     <li>
-                        <a class="pagination-link" @click="GoToLastPage">{{ last_page }}</a>
+                        <a class="pagination-link" @click="GoToLastPage">{{ articleStore.lastPage }}</a>
                     </li>
                 </template>
             </ul>
         </nav>
     </div>
-
 </template>
 
 <script>
+import { mapState } from 'vuex';
 
 export default {
 
@@ -53,12 +52,13 @@ export default {
     components: {
 
     },
-    props: ["current_page", "last_page"],
-
     data() {
         return {
 
         }
+    },
+    computed: {
+        ...mapState(["articleStore"]),
     },
 
     methods: {

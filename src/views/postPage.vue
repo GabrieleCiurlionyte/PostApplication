@@ -1,18 +1,10 @@
 <template>
   <div id="Page">
 
-    <system-message class="is-danger" v-if="hasError">
-      <template #header-slot><p>Error</p></template>
-      <template #button-slot><button class="delete" aria-label="delete" @click="hasError = false"></button></template>
-      <template #body-slot>{{ errorMsg }}</template>
-    </system-message>
+    <error-page v-if="showErrorPage"></error-page>
+    <template v-if="!showErrorPage">
 
-    <system-message class="is-success" v-if="isSuccessful">
-      <template #header-slot><p>Success</p></template>
-      <template #button-slot><button class="delete" aria-label="delete" @click="isSuccessful = false"></button></template>
-      <template #body-slot>{{ successMsg }}</template>
-    </system-message>
-
+    <h1 class="title is-1">Post page</h1>
 
     <search-bar id="search-bar">
       <template #input-slot>
@@ -24,28 +16,12 @@
       </template>
     </search-bar>
 
-
-    <button class="button is-primary" @click="CreateArticle">
+    <button class="button is-primary" @click="CreateArticle()" >
       <span class="icon">
         <i class="fa-solid fa-plus"></i>
       </span>
       <span>Add new article</span>
     </button>
-
-
-    <modal-window v-if="showModal" @close="showModal = false" :posts="posts"
-      :editablePost="editableArticle"
-      :isModalEdit="IsModalEdit">
-      <template #header id="modal-header">
-        {{ modalHeader }}
-      </template>
-
-      <template #author-slot v-if="!IsModalEdit">
-        <label for="author-drop-down">Select author:</label>
-        <drop-down id="author-drop-down" :authors="authors">
-        </drop-down>
-      </template>
-    </modal-window>
 
     <article class="message is-info" id="no-post-message" v-if="!hasPosts">
       <div class="message-body">
@@ -55,28 +31,27 @@
 
     <h2 class="subtitle is-2"></h2>
     <template v-if="hasPosts">
-      <pagination-page :posts="posts" :authors="authors" @rerenderArticles=getData(0)
-        @unsuccessful="DisplayError($event)" @successful="SuccessfulDelete($event)"
+      <pagination-page :posts="articleStore.articles" :authors="authors" @rerenderArticles=getData(0)
+        @unsuccessfulDelete="UnsuccessfulDelete()" @successfulDelete="SuccessfulDelete()"
         @EditArticle="EditArticle($event)"></pagination-page>
       <pagination-element @GoToNextPage="GoToNextPage()" @GoToPreviousPage="GoToPreviousPage()"
-        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()" :current_page="current_page"
-        :last_page="last_page"></pagination-element>
+        @GoToLastPage="GoToLastPage()" @GoToFirstPage="GoToFirstPage()"></pagination-element>
     </template>
-
-
+  </template>
   </div>
 </template>
 
 <script>
 
-import paginationPage from "../modules/PostPage/paginationPage.vue";
-import paginationElement from "../modules/PostPage/paginationElement.vue";
-import searchBar from "../common/searchBar.vue";
-import pictureButton from "../common/pictureButton.vue";
-import modalWindow from "../common/modalWindow.vue";
-import dropDown from "../common/drop-down.vue";
-import systemMessage from "../common/systemMessage.vue";
-
+import paginationPage from "../components/Article/paginationPage.vue";
+import errorPage from "./404Page.vue";
+import paginationElement from "../components/Article/paginationElement.vue";
+import searchBar from "../components/searchBar.vue";
+import { bus } from "../main";
+import systemMessageMixin from "../Mixins/systemMessageMixin";
+import modalWindowMixin from "../Mixins/modalWindowMixin";
+import articleStoreMixin from "../Mixins/ArticleStoreMixin";
+import { mapState } from "vuex";
 
 export default {
 
@@ -84,136 +59,85 @@ export default {
     'pagination-page': paginationPage,
     'pagination-element': paginationElement,
     'search-bar': searchBar,
-    'picture-button': pictureButton,
-    'modal-window': modalWindow,
-    'drop-down' : dropDown,
-    'system-message' : systemMessage,
+    'error-page' : errorPage,
   },
-
   props: [
   ],
-
   data() {
     return {
-
-      posts: [],
-      postsCount : 0,
       authors: [],
       POSTS_PER_PAGE: 4,
-      current_page: 1,
 
-      editableArticle: null,
-      //Modal window properties
-      showModal: false,
-      IsModalEdit : false,
-      modalHeader : "Default header",
-         
       searchMode: false,
       searchQuery: "",
 
-      hasError: false,
-      errorMsg: "",
-
-      isSuccessful: false,
-      successMsg: "",
-
+      showErrorPage : false,
     };
   },
-
+  mixins: [systemMessageMixin,modalWindowMixin,articleStoreMixin],
   mounted() {
 
   },
 
-  created() {
-    this.getDataCount();
+  async created() {
+    this.articleStore.lastPage = await this.$requestPlugin.getPageCount();
     this.searchMode = false;
-    this.getData(0);
-    this.getAuthors();
+    this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
+    this.authors = await this.$authorsPlugin.getAuthors();
+  },
+
+  beforeUpdate(){
+    bus.$on('UpdateArticles', async () => {
+      console.log("update event received to root");
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
+    });
+
+    bus.$on('SuccessfulDeleteFromDetail', () =>{
+      this.SuccessfulDelete();
+    });
+
+    bus.$on('UnsuccessfulDeleteFromDetail', () =>{
+      this.UnsuccessfulDelete();
+    });
+
+    bus.$on('UpdateArticlesForDetailPage', async () =>{
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
+    });
   },
 
   computed: {
-
+    ...mapState(["modalWindowStore", "systemMessageStore", "articleStore"]),
     hasPosts() {
-      return (this.posts.length > 0 ? true : false);
-    },
-
-    last_page(){
-      this.getDataCount();
-      var quotient = Math.floor(this.postsCount/this.POSTS_PER_PAGE);
-      var remainder = this.postsCount % this.POSTS_PER_PAGE;
-      console.log((remainder == 0 ? quotient : quotient + 1));
-      return (remainder == 0 ? quotient : quotient + 1);
+      return (this.articleStore.articles.length > 0 ? true : false);
     },
   },
 
   methods: {
 
     CreateArticle: function() {
-      this.modalHeader = "Add article";
-      this.isModalEdit = false;
-      console.log("create article");
-      this.showModal = true;
+      this.showModalWindow(false, null);
     },
 
     EditArticle: function(post){
-      this.editableArticle = post;
-      this.modalHeader = "Edit article";
-      this.IsModalEdit = true;
-      this.showModal = true;
+      this.showModalWindow(true, post);
     },
-
-    //TODO: whenever we clear the input field we go back to normal display mode or refresh page
-    async getAuthors() {
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Authors/`
-        );
-        this.authors = response.data;
-        console.log(this.authors);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async getDataCount(){
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles`
-        );
-        this.postsCount = response.data.length;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-
-    async getData(pageNumber) {
-      try {
-        const response = await this.$http.get(
-          `http://localhost:3000/Articles?_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
-        );
-        this.posts = response.data;
-        console.log(this.posts);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
+    
 
     async getSearchQuery(pageNumber) {
       if (this.searchQuery === "") {
         this.searchMode = false;
-        this.current_page = 1;
-        this.ExecuteAPICall();
+        this.$store.commit('articleStore/changeCurrentPage', 1);
+        this.asyncExecuteAPICall();
       }
       try {
         this.searchMode = true;
         const response = await this.$http.get(
           `http://localhost:3000/Articles?q=${this.searchQuery}&_page=${pageNumber}&_limit=${this.POSTS_PER_PAGE}`
         );
-        this.posts = response.data;
-        this.current_page = 1;
-        console.log(this.posts);
+        this.$store.commit('articleStore/updateArticles', response.data);
+        this.$store.commit('articleStore/changeCurrentPage', 1);
+        console.log("Search query results");
+        console.log(response.data)
       } catch (error) {
         this.searchMode = false;
         console.log(error);
@@ -221,58 +145,51 @@ export default {
     },
 
 
-    ExecuteAPICall() {
+    async asyncExecuteAPICall() {
       if (!(this.searchMode)) {
-        this.getData(this.current_page);
+        this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(this.articleStore.currentPage));
       }
       else {
-        this.getSearchQuery(this.current_page, this.searchQuery);
+        this.getSearchQuery(this.articleStore.currentPage, this.searchQuery);
       }
     },
 
     GoToNextPage() {
-      this.current_page += 1;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', this.articleStore.currentPage + 1);
+      this.asyncExecuteAPICall();
     },
 
     GoToPreviousPage() {
-      if (this.current_page != 1) {
-        this.current_page -= 1;
-        this.ExecuteAPICall();
+      if (this.articleStore.currentPage != 1) {
+        this.$store.commit('articleStore/changeCurrentPage', this.articleStore.currentPage - 1);
+        this.asyncExecuteAPICall();
       }
     },
 
     GoToFirstPage() {
-      this.current_page = 1;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', 1);
+      this.asyncExecuteAPICall();
     },
 
     GoToLastPage() {
-      this.current_page = this.last_page;
-      this.ExecuteAPICall();
+      this.$store.commit('articleStore/changeCurrentPage', this.articleStore.lastPage);
+      this.asyncExecuteAPICall();
     },
 
-    DisplayError(msg) {
-      this.hasError = true;
-      this.errorMsg = msg;
-      setTimeout(() => { this.hasError = false }, 4000);
+    SuccessfulDelete: async function() {
+      this.$store.commit('articleStore/updateArticles', await this.$requestPlugin.getPageData(0));
+      this.showSystemMessage(true, "delete");
     },
 
-    DisplaySuccess(msg) {
-      this.isSuccessful = true;
-      this.successMsg = msg;
-      setTimeout(() => { this.isSuccessful = false }, 4000);
-    },
-
-    SuccessfulDelete(msg) {
-      this.getData(0);
-      this.DisplaySuccess(msg);
+    UnsuccessfulDelete: async function() {
+      this.showSystemMessage(false, "delete");
     }
-
   },
 
 }
 </script>
+
+
 
 <style scoped>
 #search-bar {
@@ -284,5 +201,8 @@ export default {
   margin: 5rem;
 }
 
+h1 {
+  text-align: center;
+}
 
 </style>

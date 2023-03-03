@@ -11,18 +11,11 @@
     
 
     <!--Use v-for to go through all of the articles-->
-    <article-box v-for="post in posts" :key="post.id" @deleteArticle="showConfirmationBox(post)"
+    <article-box v-for="post in posts" :key="post.id" :post="post" @deleteArticle="showConfirmationBox(post)"
       @editArticle="editArticle(post)">
-
-      <template #title-slot>
-        <p class="title is-4">{{ post.title }}</p>
-      </template>
-      <template #author-slot>
-        <p class="subtitle is-4">{{ authorName(post) }}</p>
-      </template>
-      <template #time-slot>
-        <p class="subtitle is-6">{{ post.created_at }}</p>
-      </template>
+      <template #title-slot>{{ post.title }}</template>
+      <template #author-slot>{{ authorName(post) }}</template>
+      <template #time-slot>{{ postTime(post) }}</template>  
     </article-box>
   </div>
 
@@ -30,15 +23,15 @@
 
 <script>
 
-import article_box from './articleBox';
-import confirmationWindow from "../../common/confirmationWindow.vue";
-
+import ArticleBox from './articleBox.vue';
+import confirmationWindow from "../Messages/confirmationWindow.vue";
+import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
 
 export default {
 
   name: 'app',
   components: {
-    "article-box": article_box,
+    "article-box": ArticleBox,
     "confirmation-window": confirmationWindow,
   },
   props: ['posts', 'authors'],
@@ -48,24 +41,22 @@ export default {
       currentDeletionPost : null,
     }
   },
-
-  computed: {
-
-  },
-
-  
-
+  mixins : [dateDisplayMixin],
   methods: {
-
     cancelConfirmation(){
       this.showConfirmation = false;
     },
 
-    confirmConfirmation(){
-      this.deleteArticle(this.currentDeletionPost.id);
+    async confirmConfirmation(){
+      try {
+              await this.$requestPlugin.deletePost(this.currentDeletionPost.id);
+              this.$emit('successfulDelete');
+            } catch (error) {
+              console.log(error);
+              this.$emit('unsuccessfulDelete');
+      }
       this.showConfirmation = false;
     },
-
     showConfirmationBox(post) {
       this.showConfirmation = true;
       this.currentDeletionPost = post;
@@ -73,21 +64,11 @@ export default {
 
     authorName(post){
       let authorID = post.author;
-      return this.authors.filter((author) => author.id == authorID)[0].name;
+      if(this.authors.length != 0) {
+        return this.authors.filter((author) => author.id == authorID)[0].name;
+      } 
     },
 
-    deleteArticle: async function (postID) {
-      try {
-        const response = await this.$http.delete(
-          `http://localhost:3000/Articles/${postID}`
-        );
-        this.$emit('successful', 'The delete was successful!');
-      } catch (error) {
-        console.log(error);
-        this.$emit('unsuccessful', 'Unsuccessful delete. Please try again.');
-      }
-
-    },
     editArticle: function (post) {
       this.$emit('EditArticle', post);
     },

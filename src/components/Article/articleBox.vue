@@ -1,17 +1,22 @@
 <template>
   <div class="card">
-    <div class="card-content">
+
+    <router-link v-bind:to="'/detailPage/'+post.id">
+    <div class="card-content" >
 
       <div class="media">
         <div class="media-content">
-          <slot name=title-slot></slot>
-          <slot name=author-slot></slot>
+          <p class="title is-4"><slot name=title-slot></slot></p>
+          <p class="subtitle is-4"><slot name=author-slot></slot></p>
         </div>
       </div>
-      <slot name="content-slot"></slot>
-      <slot name="time-slot"></slot>
-    </div>
 
+      <p class="subtitle is-6"><slot name="content-slot"></slot></p>
+      <p class="subtitle is-6"><slot name="time-slot"></slot></p>
+    </div>
+    </router-link>
+
+    
     <!--Edit button-->
     <button class="button is-primary" @click="editArticle">
       <span>Edit</span>
@@ -28,8 +33,8 @@
       </span>
     </button>
 
-
   </div>
+  
 </template>
 
 <script>
@@ -41,6 +46,7 @@ export default {
 
     }
   },
+  props:['post'],
 
   methods: {
     deleteArticle: function () {
