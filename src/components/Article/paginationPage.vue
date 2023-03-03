@@ -27,7 +27,6 @@ import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../Messages/confirmationWindow.vue";
 import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
 
-
 export default {
 
   name: 'app',
@@ -58,16 +57,14 @@ export default {
       }
       this.showConfirmation = false;
     },
-
-
     showConfirmationBox(post) {
       this.showConfirmation = true;
       this.currentDeletionPost = post;
     },
 
-    authorName(post){
-      let authorID = post.author;
-      return this.authors.filter((author) => author.id == authorID)[0].name;
+    async authorName(post){
+      let result = await this.$authorsPlugin.getAuthorName(post);
+      return result.name;
     },
 
     editArticle: function (post) {

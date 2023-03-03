@@ -6,28 +6,27 @@ export const authorsPlugin = {
 };
 
 authorsPlugin.getAuthors = async function() {
-  if (this.authors.length == 0) {
+  if (authorsPlugin.authors.length == 0) {
     try {
-      this.authors = await Vue.prototype.$requestPlugin.getAuthors();
-      console.log(this.authors);
-      return this.authors;
+      authorsPlugin.authors = await Vue.prototype.$requestPlugin.getAuthors();
+      return authorsPlugin.authors;
     } catch (error) {
       console.log(error);
     }
   } else {
-    return this.authors;
+    return authorsPlugin.authors;
   }
 };
 
-authorsPlugin.getAuthorName = function(post) {
+authorsPlugin.getAuthorName = async function(post) {
   console.log("Calculate author name");
-  if(this.authors.length == 0) {
-    this.authors = this.getAuthors();
+  if(authorsPlugin.authors.length == 0) {
+    authorsPlugin.authors = await authorsPlugin.getAuthors();
   }
   let authorID = post.author;
-  if(this.authors.filter(author => author.id == authorID)[0].name != null) {
+  if(authorsPlugin.authors.filter(author => author.id == authorID)[0].name != null) {
     console.log("Author name found");
-    return this.authors.filter(author => author.id == authorID)[0].name;
+    return authorsPlugin.authors.filter(author => author.id == authorID)[0].name;
   }
   else {
     //TODO: custom exception
