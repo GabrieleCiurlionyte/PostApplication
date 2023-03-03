@@ -28,7 +28,7 @@
            </div>
            <div class="media-content">
              <p class="subtitle is-4">{{post.body}}</p>
-             <p class="subtitle is-4">{{post.created_at}}</p>
+             <p class="subtitle is-4">{{ postTime(post)}}</p>
            </div>
            <footer class="card-footer">
              <a href="#" class="card-footer-item" @click="showModal=true">Edit</a>
@@ -47,7 +47,7 @@
    import modalWindow from "../Messages/modalWindow.vue";
    import systemMessage from "../Messages/systemMessage.vue"
    import systemMessageMixin from "../../Mixins/systemMessageMixin";
-   import {AuthorCallMixin} from "../../Mixins/AuthorCallMixin";
+   import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
    import { bus } from "../../main";
   
    export default {
@@ -57,7 +57,7 @@
          "modal-window": modalWindow,
          "system-message" : systemMessage,
      },
-     mixins: [AuthorCallMixin, systemMessageMixin],
+     mixins: [systemMessageMixin, dateDisplayMixin],
      props: ['post'],
      data() {
        return {
@@ -88,7 +88,6 @@
           this.showSystemMessage(false, "delete");
         }
         this.showSystemMessage(true, "delete");
-         //Issue a get request to update the articles
          bus.$emit("UpdateArticlesForDetailPage");
          this.$router.push({path:'/'});
        },

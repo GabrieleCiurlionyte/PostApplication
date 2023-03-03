@@ -15,7 +15,7 @@
       @editArticle="editArticle(post)">
       <template #title-slot>{{ post.title }}</template>
       <template #author-slot>{{ authorName(post) }}</template>
-      <template #time-slot>{{ post.created_at }}</template>  
+      <template #time-slot>{{ postTime(post) }}</template>  
     </article-box>
   </div>
 
@@ -25,6 +25,7 @@
 
 import ArticleBox from './articleBox.vue';
 import confirmationWindow from "../Messages/confirmationWindow.vue";
+import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
 
 
 export default {
@@ -41,17 +42,13 @@ export default {
       currentDeletionPost : null,
     }
   },
-
-  computed: {
-
-  },
+  mixins : [dateDisplayMixin],
   methods: {
     cancelConfirmation(){
       this.showConfirmation = false;
     },
 
     async confirmConfirmation(){
-      //TODO: Emit an event to post page that deletion was successful or not
       try {
               await this.$requestPlugin.deletePost(this.currentDeletionPost.id);
               this.$emit('successfulDelete');
@@ -73,7 +70,6 @@ export default {
       return this.authors.filter((author) => author.id == authorID)[0].name;
     },
 
-    
     editArticle: function (post) {
       this.$emit('EditArticle', post);
     },

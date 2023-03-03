@@ -12,7 +12,7 @@ requestPlugin.getPostData = async function(postID) {
 };
 
 requestPlugin.postArticle = async function(title, content, author) {
-  let date = new Date().toString();
+  let date = new Date(Date.now());
   this.http.post("/Articles", {
     title: title,
     body: content,
@@ -23,13 +23,13 @@ requestPlugin.postArticle = async function(title, content, author) {
 };
 
 requestPlugin.putArticle = async function(postID, title ,content ,originalPost) {
-  let date = new Date().toString();
+  let date = new Date(Date.now());
   this.http.put(`/Articles/${postID}`, {
     title: title,
     body: content,
     author: originalPost.author,
     created_at: originalPost.created_at,
-    updated_at: originalPost.updated_at
+    updated_at: date,
   });
 };
 
