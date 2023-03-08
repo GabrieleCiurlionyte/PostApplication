@@ -68,9 +68,9 @@ export default {
     });
   },
   created() {
-    if(modalWindowStore.isEditable) {
-      modalWindowStore.title = this.editablePost.title;
-      modalWindowStore.content = this.editablePost.content;
+    if(this.modalWindowStore.isEditable) {
+      this.modalWindowStore.title = this.editablePost.title;
+      this.modalWindowStore.content = this.editablePost.content;
     }
   },
   data() {

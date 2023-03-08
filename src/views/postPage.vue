@@ -134,23 +134,28 @@ export default {
         try {
           this.searchMode = true;
           this.calculateSearchQueryLength();
-          return this.$requestPlugin.searchQuery(this.searchQuery, page);
+          this.articleStore.articles = await this.$requestPlugin.searchQuery(this.searchQuery, page);
         } catch (error) {
           this.searchMode = false;
           console.log(error);
         }
       }
-
     },
 
     async calculateSearchQueryLength() {
       let allSearchResults = await this.$requestPlugin.getAllSearchResults(this.searchQuery);
-      console.log("All search results");
-      console.log(allSearchResults);
-      var quotient = Math.floor(allSearchResults.length / this.POSTS_PER_PAGE);
-      var remainder = allSearchResults.length  % this.POSTS_PER_PAGE;
-      var pageCount = remainder == 0 ? quotient : quotient + 1;
-      this.$store.commit('articleStore/changeLastPage', pageCount);
+      if (allSearchResults.length == 0) {
+        this.$store.commit('articleStore/changeLastPage', 0);
+      }
+      else {
+        console.log("All search results");
+        console.log(allSearchResults);
+        var quotient = Math.floor(allSearchResults.length / this.POSTS_PER_PAGE);
+        var remainder = allSearchResults.length % this.POSTS_PER_PAGE;
+        var pageCount = remainder == 0 ? quotient : quotient + 1;
+        this.$store.commit('articleStore/changeLastPage', pageCount);
+      }
+
     },
 
 
