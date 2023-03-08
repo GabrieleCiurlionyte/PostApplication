@@ -117,6 +117,7 @@ export default {
           this.showSystemMessage(false, "edit");
         });
         this.showSystemMessage(true, "edit");
+        this.modalWindowStore.showModal = false;
         if (this.$router.currentRoute.path != '/') {
           this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
           this.$store.commit('articleStore/changeCurrentPage', 1)
@@ -130,6 +131,7 @@ export default {
         }
       }
       else {
+        //Issues a post request if validation is correct
         this.validatePost();
         //TODO: test
         this.updateArticlesFromMixin(await this.$requestPlugin.getPageData(0), 1);
