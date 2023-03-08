@@ -65,9 +65,14 @@ export default {
   updated() {
     bus.$on('AuthorSelected', (data) => {
       this.author = data;
-    })
+    });
   },
-
+  created() {
+    if(modalWindowStore.isEditable) {
+      modalWindowStore.title = this.editablePost.title;
+      modalWindowStore.content = this.editablePost.content;
+    }
+  },
   data() {
     return {
 

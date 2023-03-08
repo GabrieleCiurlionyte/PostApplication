@@ -1,12 +1,6 @@
 <template>
   <div id="page">
 
-    <modal-window v-if="showModal" @close="showModal = false" :editablePost="post" :isModalEdit="true">
-      <template #header id="modal-header">
-        Edit article: {{ post.title }}
-      </template>
-    </modal-window>
-
     <confirmation-window :class="{ 'is-active': showConfirmation }" v-if="showConfirmation"
       @CancelConfirmation="cancelConfirmation()" @ConfirmConfirmation="confirmConfirmation()">
       <template #text-slot><b>Do you really want to delete post?</b><br>
@@ -19,14 +13,14 @@
       <div class="card-content">
         <div class="content">
           <h2 class="title is-2">{{ post.title }}</h2>
-          <h2 class="title is-2">{{ CalculateAuthorName(post)}}</h2>
+          <h2 class="title is-2">{{ CalculateAuthorName(post) }}</h2>
         </div>
         <div class="media-content">
           <p class="subtitle is-4">{{ post.body }}</p>
           <p class="subtitle is-4">{{ postTime(post) }}</p>
         </div>
         <footer class="card-footer">
-          <a href="#" class="card-footer-item" @click="showModal = true">Edit</a>
+          <a href="#" class="card-footer-item" @click="showEditModal()">Edit</a>
           <a href="#" class="card-footer-item" @click="showConfirmation = true">Delete</a>
         </footer>
       </div>
@@ -44,6 +38,7 @@ import systemMessage from "../Messages/systemMessage.vue"
 import systemMessageMixin from "../../Mixins/systemMessageMixin";
 import dateDisplayMixin from "../../Mixins/DateDisplayMixin";
 import { bus } from "../../main";
+import modalWindowMixin from "../../Mixins/modalWindowMixin";
 
 export default {
   components: {
@@ -52,7 +47,7 @@ export default {
     "modal-window": modalWindow,
     "system-message": systemMessage,
   },
-  mixins: [systemMessageMixin, dateDisplayMixin],
+  mixins: [systemMessageMixin, dateDisplayMixin, modalWindowMixin],
   props: ['post'],
   data() {
     return {
@@ -99,10 +94,12 @@ export default {
         return this.authors.filter((author) => author.id == authorID)[0].name;
       }
     },
-  },
-  watch: {
+    showEditModal() {
+      this.showModalWindow(true, this.post);
+    },
   }
-}
+
+  }
 </script>
    
 <style scoped>
