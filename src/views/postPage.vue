@@ -127,6 +127,7 @@ export default {
     async getSearchQuery(page) {
       if (this.searchQuery === "") {
         this.searchMode = false;
+        this.articleStore.lastPage = await this.$requestPlugin.getPageCount();
         this.$store.commit('articleStore/changeCurrentPage', 1);
         this.asyncExecuteAPICall();
       }
